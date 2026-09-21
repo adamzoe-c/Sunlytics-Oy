@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Sunlytics | Pilot Onboarding</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#f7971e">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --orange: #f7971e;
+  --orange-dark: #ff4e00;
+  --navy: #1a1a1a;
+  --gray: #6b7280;
+  --border: #e8e8e8;
+  --off: #f9f9f9;
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --green-border: #bbf7d0;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--off);
+  color: var(--navy);
+  min-height: 100vh;
+}
+
+/* NAV */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 64px;
+  background: #fff; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { text-decoration: none; }
+.logo-text { font-size: 18px; font-weight: 900; letter-spacing: 1.5px; background: linear-gradient(135deg, var(--orange), var(--orange-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-skip { font-size: 13px; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.lang-switcher { display: flex; align-items: center; gap: 4px; background: var(--off); border-radius: 10px; padding: 4px; }
+.lang-btn { display: flex; align-items: center; gap: 5px; background: none; border: none; border-radius: 7px; padding: 5px 9px; cursor: pointer; font-size: 12px; font-weight: 700; color: var(--gray); font-family: inherit; transition: all 0.18s; letter-spacing: 0.4px; }
+.lang-btn img { width: 20px; height: 14px; object-fit: cover; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.lang-btn:hover { color: var(--navy); background: white; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+.lang-btn.active { color: var(--orange-dark); background: white; box-shadow: 0 1px 8px rgba(247,151,30,0.2); }
+@media (max-width: 560px) {
+  .lang-btn { font-size: 11px; padding: 4px 7px; }
+  .lang-btn img { width: 18px; height: 12px; }
+}
+.nav-skip:hover { color: var(--orange); }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #fff8f0 0%, #fef3e2 100%);
+  padding: 60px 5% 70px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid #fde8c3;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 60% 50%, rgba(247,151,30,0.08) 0%, transparent 70%);
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(247,151,30,0.15); color: var(--orange-dark);
+  border: 1px solid rgba(247,151,30,0.3);
+  padding: 6px 16px; border-radius: 50px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 20px; position: relative;
+}
+.hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 900; color: var(--navy); line-height: 1.1; margin-bottom: 14px; position: relative; }
+.hero h1 span { background: linear-gradient(135deg, var(--orange), var(--orange-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 16px; color: var(--gray); max-width: 520px; margin: 0 auto; line-height: 1.7; position: relative; }
+.pilot-name { color: var(--orange); font-weight: 700; }
+
+/* PROGRESS BAR */
+.progress-wrap {
+  background: #fff; border-bottom: 1px solid var(--border);
+  padding: 20px 5%;
+}
+.progress-steps {
+  display: flex; align-items: flex-start; justify-content: center; gap: 0;
+  max-width: 600px; margin: 0 auto;
+}
+.prog-step {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  flex: 1; position: relative; cursor: pointer; min-width: 0;
+}
+.prog-step:not(:last-child)::after {
+  content: '';
+  position: absolute; top: 16px; left: 50%; width: 100%; height: 2px;
+  background: var(--border); z-index: 0;
+}
+.prog-step.done:not(:last-child)::after,
+.prog-step.active:not(:last-child)::after { background: var(--orange); }
+.prog-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 2px solid var(--border); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #ccc;
+  position: relative; z-index: 1; transition: all 0.3s; flex-shrink: 0;
+}
+.prog-step.done .prog-dot { background: var(--green); border-color: var(--green); color: #fff; }
+.prog-step.active .prog-dot { background: linear-gradient(135deg, var(--orange), var(--orange-dark)); border-color: transparent; color: #fff; box-shadow: 0 3px 10px rgba(247,151,30,0.4); }
+.prog-label {
+  font-size: 10px; font-weight: 600; color: #ccc;
+  white-space: normal; text-align: center;
+  word-break: break-word; line-height: 1.3;
+  padding: 0 2px;
+}
+.prog-step.done .prog-label,
+.prog-step.active .prog-label { color: var(--navy); }
+
+/* MAIN */
+main { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
+
+.step-section { display: none; }
+.step-section.active { display: block; }
+
+.card {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 20px; padding: 32px; margin-bottom: 16px;
+}
+.card h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+.card p { font-size: 14px; color: var(--gray); line-height: 1.7; margin-bottom: 18px; }
+.card p:last-child { margin-bottom: 0; }
+
+/* CHECKLIST */
+.checklist { display: flex; flex-direction: column; gap: 12px; }
+.check-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: 12px;
+  border: 2px solid var(--border); background: #fff;
+  cursor: pointer; transition: all 0.2s; user-select: none;
+}
+.check-item:hover { border-color: var(--orange); background: #fef9f0; }
+.check-item.checked { border-color: var(--green); background: var(--green-bg); }
+.check-box {
+  width: 22px; height: 22px; flex-shrink: 0; border-radius: 6px;
+  border: 2px solid var(--border); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.check-item.checked .check-box { background: var(--green); border-color: var(--green); }
+.check-label { font-size: 14px; font-weight: 600; flex: 1; }
+.check-item.checked .check-label { color: var(--green); text-decoration: line-through; opacity: 0.7; }
+.check-sub { font-size: 12px; color: var(--gray); margin-top: 2px; }
+
+/* INFO BOXES */
+.info-box {
+  border-radius: 14px; padding: 18px 20px; margin-bottom: 14px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.info-box.orange { background: #fff8f0; border: 1px solid #fde8c3; }
+.info-box.green  { background: var(--green-bg); border: 1px solid var(--green-border); }
+.info-box.blue   { background: #eff6ff; border: 1px solid #bfdbfe; }
+.info-box-icon { flex-shrink: 0; margin-top: 2px; }
+.info-box-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.info-box.orange .info-box-title { color: #c2410c; }
+.info-box.green  .info-box-title { color: var(--green); }
+.info-box.blue   .info-box-title { color: #1d4ed8; }
+.info-box p { font-size: 13px; color: var(--gray); line-height: 1.6; margin: 0; }
+
+/* STEPS LIST */
+.how-steps { display: flex; flex-direction: column; gap: 20px; }
+.how-step { display: flex; gap: 16px; align-items: flex-start; }
+.how-num {
+  width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+  color: #fff; font-size: 14px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.how-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.how-body p { font-size: 13px; color: var(--gray); line-height: 1.6; margin: 0; }
+
+/* EARNINGS CARDS */
+.earn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+.earn-card { background: var(--off); border: 1px solid var(--border); border-radius: 14px; padding: 18px 14px; text-align: center; }
+.earn-num { font-size: 26px; font-weight: 900; background: linear-gradient(135deg, var(--orange), var(--orange-dark)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.earn-label { font-size: 11px; color: var(--gray); margin-top: 4px; font-weight: 600; }
+
+/* PROFILE FORM */
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.form-group input, .form-group select {
+  width: 100%; padding: 12px 16px;
+  border: 2px solid var(--border); border-radius: 12px;
+  font-size: 14px; font-family: inherit; outline: none; background: #fff;
+  transition: border-color 0.2s; color: var(--navy);
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--orange); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* BUTTONS */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+  color: #fff; padding: 14px 28px; border-radius: 12px;
+  font-size: 15px; font-weight: 700; border: none; cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 6px 20px rgba(247,151,30,0.3);
+  transition: transform 0.2s, box-shadow 0.2s; text-decoration: none;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(247,151,30,0.4); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--gray);
+  padding: 14px 28px; border-radius: 12px;
+  font-size: 15px; font-weight: 600; border: 2px solid var(--border);
+  cursor: pointer; font-family: inherit; transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+.btn-row { display: flex; gap: 12px; align-items: center; margin-top: 24px; flex-wrap: wrap; }
+
+/* SUCCESS */
+.success-wrap {
+  text-align: center; padding: 40px 20px;
+}
+.success-circle {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 8px 28px rgba(34,197,94,0.35);
+}
+.success-wrap h2 { font-size: 26px; font-weight: 900; margin-bottom: 10px; }
+.success-wrap p { font-size: 15px; color: var(--gray); max-width: 420px; margin: 0 auto 28px; line-height: 1.7; }
+
+/* FOOTER */
+footer {
+  text-align: center; padding: 20px;
+  font-size: 12px; color: var(--gray);
+  border-top: 1px solid var(--border); background: #fff;
+}
+footer a { color: var(--orange-dark); text-decoration: none; margin: 0 6px; }
+
+@media (max-width: 500px) {
+  .earn-grid { grid-template-columns: repeat(3, 1fr); }
+  .form-row { grid-template-columns: 1fr; }
+  .card { padding: 22px 18px; }
+  main { padding: 24px 14px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo"><span class="logo-text">SUNLYTICS</span></a>
+  <div class="nav-right">
+    <div class="lang-switcher" role="group" aria-label="Language switcher">
+      <button class="lang-btn active" id="langEN" onclick="setLang('en')" aria-label="Switch to English" aria-pressed="true">
+        <img src="uk.png" alt="English"> EN
+      </button>
+      <button class="lang-btn" id="langFI" onclick="setLang('fi')" aria-label="Switch to Finnish" aria-pressed="false">
+        <img src="Fin.png" alt="Suomi"> FI
+      </button>
+    </div>
+    <a href="pilot-dashboard.html" class="nav-skip" data-i18n="nav_skip">Skip to dashboard &rarr;</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2c-.5.1-.9.6-.6 1.1l1.5 2.5 5.5-1L6 13l-2 1 1 2 2-1 3.5-2.5-1 5.5 2.5 1.5c.5.3 1 0 1.1-.6z"/></svg>
+    <span data-i18n="hero_tag">Welcome to the Sunlytics Pilot Network</span>
+  </div>
+  <h1 data-i18n="hero_h1">You are <span>approved.</span><br>Let's get you flying.</h1>
+  <p data-i18n="hero_p">This takes about 5 minutes. Complete the steps below and you will be ready to accept your first mission today.</p>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="prog-step active" id="prog0">
+      <div class="prog-dot">1</div>
+      <div class="prog-label" data-i18n="prog0">How It Works</div>
+    </div>
+    <div class="prog-step" id="prog1">
+      <div class="prog-dot">2</div>
+      <div class="prog-label" data-i18n="prog1">Your Earnings</div>
+    </div>
+    <div class="prog-step" id="prog2">
+      <div class="prog-dot">3</div>
+      <div class="prog-label" data-i18n="prog2">First Mission</div>
+    </div>
+    <div class="prog-step" id="prog3">
+      <div class="prog-dot">4</div>
+      <div class="prog-label" data-i18n="prog3">Checklist</div>
+    </div>
+    <div class="prog-step" id="prog4">
+      <div class="prog-dot">5</div>
+      <div class="prog-label" data-i18n="prog4">Profile</div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- STEP 1: HOW IT WORKS -->
+  <div class="step-section active" id="step0">
+    <div class="card">
+      <h2 data-i18n="s1_h2">How Sunlytics works</h2>
+      <p data-i18n="s1_p">Every time a homeowner orders a drone report on sunlytics.fi, a mission is created and sent to pilots in that area. Here is the full flow from notification to payment.</p>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div class="how-body">
+            <h4 data-i18n="s1_1_h">You get an SMS and email</h4>
+            <p data-i18n="s1_1_p">"New mission in Espoo. Address: Mannerheimintie 45. Reward: €40. Accept?" You have 30 minutes to claim it before it goes to the next pilot.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div class="how-body">
+            <h4 data-i18n="s1_2_h">Accept in the pilot dashboard</h4>
+            <p data-i18n="s1_2_p">Log in to your pilot dashboard, hit Accept, and the mission is locked to you. The homeowner is notified automatically.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div class="how-body">
+            <h4 data-i18n="s1_3_h">Fly the roof</h4>
+            <p data-i18n="s1_3_p">Go to the address and fly a standard grid pattern over the roof. We recommend 30m altitude, 80% overlap, nadir angle. The whole flight takes 10 to 20 minutes.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">4</div>
+          <div class="how-body">
+            <h4 data-i18n="s1_4_h">Upload your images</h4>
+            <p data-i18n="s1_4_p">Go to upload-mission.html from your dashboard and upload the images before your mission deadline. Minimum 40 images per standard roof.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">5</div>
+          <div class="how-body">
+            <h4 data-i18n="s1_5_h">Get paid automatically</h4>
+            <p data-i18n="s1_5_p">Once images are validated by our system (usually within a few hours), your payment is released to your bank or Revolut. No invoicing needed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box orange">
+      <div class="info-box-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div>
+        <div class="info-box-title" data-i18n="s1_safety_title">Important: only fly when it is safe</div>
+        <p data-i18n="s1_safety_p">Do not fly in wind above 10 m/s, rain, or temperatures below 0°C. Our system checks weather before scheduling but always use your own judgment. If conditions are unsafe, contact us and we reschedule at no penalty to you.</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="nextStep()"><span data-i18n="s1_next_btn">Next: Your Earnings</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+
+  <!-- STEP 2: EARNINGS -->
+  <div class="step-section" id="step1">
+    <div class="card">
+      <h2 data-i18n="s2_h2">What you earn</h2>
+      <p data-i18n="s2_p">You earn €40 per completed and validated mission. Payment is automatic once images are approved. No invoicing, no chasing, no waiting weeks.</p>
+
+      <div class="earn-grid">
+        <div class="earn-card">
+          <div class="earn-num">€40</div>
+          <div class="earn-label" data-i18n="earn1_label">Per mission</div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-num">€160</div>
+          <div class="earn-label" data-i18n="earn2_label">Per month (1/week)</div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-num">€640</div>
+          <div class="earn-label" data-i18n="earn3_label">Per month (4/week)</div>
+        </div>
+      </div>
+
+      <div class="info-box green">
+        <div class="info-box-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <div class="info-box-title" data-i18n="pay_title">Payment details</div>
+          <p data-i18n="pay_p">We pay by bank transfer or Revolut, whichever you prefer. Payments are processed within 24 hours of image validation. Set your preferred payment method in your profile.</p>
+        </div>
+      </div>
+
+      <div class="info-box blue">
+        <div class="info-box-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <div class="info-box-title" data-i18n="tax_title">Finnish tax note</div>
+          <p data-i18n="tax_p">If you earn over €500/month from Sunlytics, you may need to register as a light entrepreneur (kevytyrittäjä) or self-employed person and declare the income to the Finnish Tax Administration (Verohallinto). We recommend checking with a local accountant. We provide monthly earnings summaries on request.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="prevStep()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="btn_back">Back</span></button>
+      <button class="btn-primary" onclick="nextStep()"><span data-i18n="s2_next_btn">Next: Your First Mission</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+
+  <!-- STEP 3: FIRST MISSION GUIDE -->
+  <div class="step-section" id="step2">
+    <div class="card">
+      <h2 data-i18n="s3_h2">Flying your first mission</h2>
+      <p data-i18n="s3_p">Here is exactly what to do from the moment you get a mission notification to the moment you upload your images.</p>
+
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div class="how-body">
+            <h4 data-i18n="s3_1_h">Check the mission details</h4>
+            <p data-i18n="s3_1_p">Address, roof type, and any notes from our team. Google Street View the address before you go so you know what to expect.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div class="how-body">
+            <h4 data-i18n="s3_2_h">Check airspace and NOTAMs</h4>
+            <p data-i18n="s3_2_p">Use droneinfo.fi (Traficom's official drone map) to confirm the address is in uncontrolled airspace. If it is within 1km of an airport, contact us before flying.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div class="how-body">
+            <h4 data-i18n="s3_3_h">Flight settings</h4>
+            <p data-i18n="s3_3_p">Altitude: 30 to 40m above roof level. Overlap: 80% front, 70% side. Camera angle: 90° nadir (straight down). Image format: JPEG at full resolution. Minimum 40 images for a standard house, 80 for a warehouse.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">4</div>
+          <div class="how-body">
+            <h4 data-i18n="s3_4_h">Cover the full roof</h4>
+            <p data-i18n="s3_4_p">Fly a grid pattern covering the entire roof plus 5m margin on all sides. Do not miss any sections. Partial coverage is the most common reason for image rejection.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">5</div>
+          <div class="how-body">
+            <h4 data-i18n="s3_5_h">Upload within 24 hours</h4>
+            <p data-i18n="s3_5_p">Go to your pilot dashboard, open the mission, and use the Upload Images button. Images must be uploaded within 24 hours of the flight. After that the mission may be reassigned.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box orange">
+      <div class="info-box-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c2410c" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div>
+        <div class="info-box-title" data-i18n="s3_reject_title">Common rejection reasons</div>
+        <p data-i18n="s3_reject_p">Blurry images (fly slower), incomplete coverage, images taken at wrong angle (check your gimbal is set to nadir), or too few images. If your images are rejected you will be notified and given a chance to reshoot within 48 hours.</p>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="prevStep()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="btn_back">Back</span></button>
+      <button class="btn-primary" onclick="nextStep()"><span data-i18n="s3_next_btn">Next: Pre-flight Checklist</span> <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+
+  <!-- STEP 4: CHECKLIST -->
+  <div class="step-section" id="step3">
+    <div class="card">
+      <h2 data-i18n="s4_h2">Your pre-flight checklist</h2>
+      <p data-i18n="s4_p">Tick everything below before accepting your first mission. You will also use this checklist before every flight.</p>
+
+      <div class="checklist" id="checklist">
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c1_label">Valid drone operator credentials in my possession</div><div class="check-sub" data-i18n="c1_sub">EU Open Category A1/A2/A3 or Specific Category STS, as applicable in your country</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c2_label">Drone is registered with the national aviation authority</div><div class="check-sub" data-i18n="c2_sub">Registration number must be marked on the drone</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c3_label">Drone battery fully charged</div><div class="check-sub" data-i18n="c3_sub">Bring at least one spare battery per mission</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c4_label">SD card formatted and empty</div><div class="check-sub" data-i18n="c4_sub">At least 16GB free space recommended</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c5_label">Camera settings correct</div><div class="check-sub" data-i18n="c5_sub">Full resolution JPEG, gimbal at 90° nadir, auto exposure</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c6_label">Airspace checked (droneinfo.fi)</div><div class="check-sub" data-i18n="c6_sub">Confirm no active TFRs or restricted zones</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c7_label">Weather checked and suitable</div><div class="check-sub" data-i18n="c7_sub">Wind under 10 m/s, no rain, temp above 0°C</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c8_label">Pilot dashboard login confirmed</div><div class="check-sub" data-i18n="c8_sub">Test login at pilot-login.html before your first mission</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c9_label">Upload-mission page tested</div><div class="check-sub" data-i18n="c9_sub">Confirm you can access upload-mission.html and see the upload form</div></div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div><div class="check-label" data-i18n="c10_label">Emergency contact saved</div><div class="check-sub" data-i18n="c10_sub">Save info@sunlytics.fi and +358 40 000 0000 in your phone</div></div>
+        </div>
+      </div>
+
+      <div id="checkProgress" style="margin-top:18px; font-size:13px; color:var(--gray); text-align:center;" data-i18n="progress_initial">0 of 10 completed</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="prevStep()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="btn_back">Back</span></button>
+      <button class="btn-primary" id="checklistNextBtn" onclick="nextStep()" disabled data-i18n="checklist_incomplete">Complete All Items First</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: PROFILE -->
+  <div class="step-section" id="step4">
+    <div class="card">
+      <h2 data-i18n="s5_h2">Confirm your details</h2>
+      <p data-i18n="s5_p">Check these details are correct. Your payment will be sent to the account you specify here.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label data-i18n="lbl_first">First Name</label>
+          <input type="text" id="pFirstName" placeholder="Matti">
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_last">Last Name</label>
+          <input type="text" id="pLastName" placeholder="Virtanen">
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-i18n="lbl_phone">Phone Number</label>
+        <div style="display:flex;align-items:stretch;border:2px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;transition:border-color 0.2s;" id="phoneWrap">
+          <div style="display:flex;align-items:center;gap:7px;padding:0 14px;background:#f5f5f5;border-right:2px solid var(--border);font-size:14px;font-weight:600;color:#374151;white-space:nowrap;flex-shrink:0;">
+            <span style="font-size:17px;">🇫🇮</span> +358
+          </div>
+          <input type="tel" id="pPhone" placeholder="40 123 4567" style="flex:1;border:none;padding:12px 16px;font-size:14px;font-family:inherit;outline:none;background:transparent;" onfocus="document.getElementById('phoneWrap').style.borderColor='var(--orange)'" onblur="document.getElementById('phoneWrap').style.borderColor='var(--border)'">
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-i18n="lbl_payment">Preferred Payment Method</label>
+        <select id="pPayment">
+          <option value="" data-i18n="opt_select">Select method</option>
+          <option value="bank" data-i18n="opt_bank">Bank transfer (IBAN)</option>
+          <option value="revolut" data-i18n="opt_revolut">Revolut</option>
+        </select>
+      </div>
+      <div class="form-group" id="ibanGroup" style="display:none;">
+        <label data-i18n="lbl_iban">IBAN</label>
+        <input type="text" id="pIBAN" placeholder="FI21 1234 5600 0007 85">
+      </div>
+      <div class="form-group" id="revolutGroup" style="display:none;">
+        <label data-i18n="lbl_revolut">Revolut phone or username</label>
+        <input type="text" id="pRevolut" placeholder="@mattiv or +358 40 123 4567">
+      </div>
+      <div class="form-group">
+        <label data-i18n="lbl_drone">Drone Model</label>
+        <input type="text" id="pDrone" placeholder="e.g. DJI Mavic 3">
+      </div>
+      <div class="form-group">
+        <label data-i18n="lbl_license">Drone Operator Registration / Certificate Number</label>
+        <input type="text" id="pLicense" placeholder="e.g. FIN-UAS-00123">
+      </div>
+    </div>
+
+    <div id="profileErr" style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 16px;font-size:13px;color:#dc2626;margin-bottom:14px;display:none;"></div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="prevStep()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg> <span data-i18n="btn_back">Back</span></button>
+      <button class="btn-primary" id="finishBtn" onclick="finishOnboarding()">
+        <span data-i18n="finish_btn">Finish Setup</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 6: DONE -->
+  <div class="step-section" id="step5">
+    <div class="card">
+      <div class="success-wrap">
+        <div class="success-circle">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 data-i18n="done_h2">You are ready to fly.</h2>
+        <p data-i18n="done_p">Your profile is set up and you are now active in the Sunlytics pilot network. Your first mission notification could arrive at any time.</p>
+        <a href="pilot-dashboard.html" class="btn-primary" style="display:inline-flex; margin: 0 auto;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span data-i18n="done_dashboard_btn">Go to Pilot Dashboard</span>
+        </a>
+        <p style="margin-top:20px; font-size:13px;" data-i18n="done_questions_p">Questions? Email us at <a href="mailto:info@sunlytics.fi" style="color:var(--orange-dark);">info@sunlytics.fi</a></p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>&copy; 2026 Sunlytics Oy &middot; <a href="privacy.html">Privacy</a> <a href="terms.html">Terms</a> <a href="contact.html">Contact</a></p>
+  <p style="margin:10px 0 0; display:flex; align-items:center; justify-content:center; gap:10px;">
+    <a href="https://g.page/r/sunlytics" target="_blank" rel="noopener" aria-label="Google Business" title="Review us on Google" style="width:28px;height:28px;background:#fff;border:1px solid #e8e8e8;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+      <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    </a>
+    <a href="#" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn" style="width:28px;height:28px;background:#fff;border:1px solid #e8e8e8;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg>
+    </a>
+  </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://keeityfejyfqqsvcqfsz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_A6r_0AtMpEs_KBJIJJXmYg_mq66XazY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ── i18n ─────────────────────────────────────────────────────────────────
+const T = {
+  en: {
+    nav_skip: 'Skip to dashboard &rarr;',
+    hero_tag: 'Welcome to the Sunlytics Pilot Network',
+    hero_h1: "You are <span>approved.</span><br>Let's get you flying.",
+    hero_p: 'This takes about 5 minutes. Complete the steps below and you will be ready to accept your first mission today.',
+    prog0: 'How It Works', prog1: 'Your Earnings', prog2: 'First Mission', prog3: 'Checklist', prog4: 'Profile',
+    s1_h2: 'How Sunlytics works',
+    s1_p: 'Every time a homeowner orders a drone report on sunlytics.fi, a mission is created and sent to pilots in that area. Here is the full flow from notification to payment.',
+    s1_1_h: 'You get an SMS and email',
+    s1_1_p: '"New mission in Plovdiv. Address: bul. Ruski 45. Reward: \u20ac40. Accept?" You have 30 minutes to claim it before it goes to the next pilot.',
+    s1_2_h: 'Accept in the pilot dashboard',
+    s1_2_p: 'Log in to your pilot dashboard, hit Accept, and the mission is locked to you. The homeowner is notified automatically.',
+    s1_3_h: 'Fly the roof',
+    s1_3_p: 'Go to the address and fly a standard grid pattern over the roof. We recommend 30m altitude, 80% overlap, nadir angle. The whole flight takes 10 to 20 minutes.',
+    s1_4_h: 'Upload your images',
+    s1_4_p: 'Go to upload-mission.html from your dashboard and upload the images before your mission deadline. Minimum 40 images per standard roof.',
+    s1_5_h: 'Get paid automatically',
+    s1_5_p: 'Once images are validated by our system (usually within a few hours), your payment is released to your bank or Revolut. No invoicing needed.',
+    s1_safety_title: 'Important: only fly when it is safe',
+    s1_safety_p: 'Do not fly in wind above 10 m/s, rain, or temperatures below 0\u00b0C. Our system checks weather before scheduling but always use your own judgment. If conditions are unsafe, contact us and we reschedule at no penalty to you.',
+    s1_next_btn: 'Next: Your Earnings',
+    s2_h2: 'What you earn',
+    s2_p: 'You earn \u20ac40 per completed and validated mission. Payment is automatic once images are approved. No invoicing, no chasing, no waiting weeks.',
+    earn1_label: 'Per mission', earn2_label: 'Per month (1/week)', earn3_label: 'Per month (4/week)',
+    pay_title: 'Payment details',
+    pay_p: 'We pay by bank transfer or Revolut, whichever you prefer. Payments are processed within 24 hours of image validation. Set your preferred payment method in your profile.',
+    tax_title: 'Finnish tax note',
+    tax_p: 'If you earn over \u20ac500/month from Sunlytics, you may need to register as a light entrepreneur (kevytyritt\u00e4j\u00e4) or self-employed person and declare the income to the Finnish Tax Administration (Verohallinto). We recommend checking with a local accountant. We provide monthly earnings summaries on request.',
+    s2_next_btn: 'Next: Your First Mission',
+    s3_h2: 'Flying your first mission',
+    s3_p: 'Here is exactly what to do from the moment you get a mission notification to the moment you upload your images.',
+    s3_1_h: 'Check the mission details',
+    s3_1_p: 'Address, roof type, and any notes from our team. Google Street View the address before you go so you know what to expect.',
+    s3_2_h: 'Check airspace and NOTAMs',
+    s3_2_p: 'Use droneinfo.fi (Traficom's official drone map) to confirm the address is in uncontrolled airspace. If it is within 1km of an airport, contact us before flying.',
+    s3_3_h: 'Flight settings',
+    s3_3_p: 'Altitude: 30 to 40m above roof level. Overlap: 80% front, 70% side. Camera angle: 90\u00b0 nadir (straight down). Image format: JPEG at full resolution. Minimum 40 images for a standard house, 80 for a warehouse.',
+    s3_4_h: 'Cover the full roof',
+    s3_4_p: 'Fly a grid pattern covering the entire roof plus 5m margin on all sides. Do not miss any sections. Partial coverage is the most common reason for image rejection.',
+    s3_5_h: 'Upload within 24 hours',
+    s3_5_p: 'Go to your pilot dashboard, open the mission, and use the Upload Images button. Images must be uploaded within 24 hours of the flight. After that the mission may be reassigned.',
+    s3_reject_title: 'Common rejection reasons',
+    s3_reject_p: 'Blurry images (fly slower), incomplete coverage, images taken at wrong angle (check your gimbal is set to nadir), or too few images. If your images are rejected you will be notified and given a chance to reshoot within 48 hours.',
+    s3_next_btn: 'Next: Pre-flight Checklist',
+    btn_back: 'Back',
+    s4_h2: 'Your pre-flight checklist',
+    s4_p: 'Tick everything below before accepting your first mission. You will also use this checklist before every flight.',
+    c1_label: 'Valid drone operator credentials in my possession', c1_sub: 'EU Open Category A1/A2/A3 or Specific Category STS, as applicable in your country',
+    c2_label: 'Drone is registered with the national aviation authority', c2_sub: 'Registration number must be marked on the drone',
+    c3_label: 'Drone battery fully charged', c3_sub: 'Bring at least one spare battery per mission',
+    c4_label: 'SD card formatted and empty', c4_sub: 'At least 16GB free space recommended',
+    c5_label: 'Camera settings correct', c5_sub: 'Full resolution JPEG, gimbal at 90\u00b0 nadir, auto exposure',
+    c6_label: 'Airspace checked (droneinfo.fi)', c6_sub: 'Confirm no active TFRs or restricted zones',
+    c7_label: 'Weather checked and suitable', c7_sub: 'Wind under 10 m/s, no rain, temp above 0\u00b0C',
+    c8_label: 'Pilot dashboard login confirmed', c8_sub: 'Test login at pilot-login.html before your first mission',
+    c9_label: 'Upload-mission page tested', c9_sub: 'Confirm you can access upload-mission.html and see the upload form',
+    c10_label: 'Emergency contact saved', c10_sub: 'Save info@sunlytics.fi and +358 40 000 0000 in your phone',
+    progress_initial: '0 of 10 completed', progress_of: ' of ', progress_completed: ' completed',
+    checklist_done: 'All done, next step', checklist_incomplete: 'Complete All Items First',
+    s5_h2: 'Confirm your details',
+    s5_p: 'Check these details are correct. Your payment will be sent to the account you specify here.',
+    lbl_first: 'First Name', lbl_last: 'Last Name', lbl_phone: 'Phone Number', lbl_payment: 'Preferred Payment Method',
+    opt_select: 'Select method', opt_bank: 'Bank transfer (IBAN)', opt_revolut: 'Revolut',
+    lbl_iban: 'IBAN', lbl_revolut: 'Revolut phone or username', lbl_drone: 'Drone Model', lbl_license: 'Drone Operator Registration / Certificate Number',
+    finish_btn: 'Finish Setup',
+    err_fill: 'Please fill in all fields before finishing.', saving: 'Saving...',
+    done_h2: 'You are ready to fly.',
+    done_p: 'Your profile is set up and you are now active in the Sunlytics pilot network. Your first mission notification could arrive at any time.',
+    done_dashboard_btn: 'Go to Pilot Dashboard',
+    done_questions_p: 'Questions? Email us at <a href="mailto:info@sunlytics.fi" style="color:var(--orange-dark);">info@sunlytics.fi</a>',
+  },
+  fi: {
+    nav_skip: 'Siirry kojelautaan &rarr;',
+    hero_tag: 'Tervetuloa Sunlyticsin pilottiverkostoon',
+    hero_h1: 'Olet <span>hyväksytty.</span><br>Aloitetaan lentäminen.',
+    hero_p: 'Tämä kestää noin 5 minuuttia. Käy alla olevat vaiheet läpi, niin olet valmis ottamaan vastaan ensimmäisen tehtäväsi jo tänään.',
+    prog0: 'Näin se toimii', prog1: 'Ansiosi', prog2: 'Ensimmäinen tehtävä', prog3: 'Tarkistuslista', prog4: 'Profiili',
+    s1_h2: 'Näin Sunlytics toimii',
+    s1_p: 'Aina kun kotitalous tilaa dronekartoituksen osoitteessa sunlytics.fi, luodaan tehtävä, joka lähetetään alueen pilotille. Tässä on koko kulku ilmoituksesta maksuun.',
+    s1_1_h: 'Saat tekstiviestin ja sähköpostin',
+    s1_1_p: '"Uusi tehtävä Espoossa. Osoite: Mannerheimintie 45. Palkkio: 40 €. Hyväksytkö?" Sinulla on 30 minuuttia aikaa hyväksyä tehtävä, ennen kuin se siirtyy seuraavalle pilotille.',
+    s1_2_h: 'Hyväksy pilottikojelaudassa',
+    s1_2_p: 'Kirjaudu pilottikojelautaan, paina "Hyväksy", ja tehtävä lukittuu sinulle. Kotitaloudelle ilmoitetaan automaattisesti.',
+    s1_3_h: 'Lennätä katto',
+    s1_3_p: 'Mene osoitteeseen ja lennätä vakiomuotoinen ruudukkokuvio katon yllä. Suosittelemme 30 m lentokorkeutta, 80 % peittoa ja suoraan alaspäin suunnattua kulmaa. Koko lento kestää 10–20 minuuttia.',
+    s1_4_h: 'Lataa kuvasi',
+    s1_4_p: 'Siirry kojelaudastasi sivulle upload-mission.html ja lataa kuvat ennen tehtävän määräaikaa. Vähintään 40 kuvaa tavallista kattoa kohden.',
+    s1_5_h: 'Saat maksun automaattisesti',
+    s1_5_p: 'Kun järjestelmämme on validoinut kuvat (yleensä muutaman tunnin sisällä), maksu vapautetaan pankkitilillesi tai Revolutiin. Laskutusta ei tarvita.',
+    s1_safety_title: 'Tärkeää: lennätä vain kun se on turvallista',
+    s1_safety_p: 'Älä lennätä, jos tuuli ylittää 10 m/s, sataa tai lämpötila on alle 0 °C. Järjestelmämme tarkistaa sään ennen aikataulutusta, mutta käytä aina omaa harkintaasi. Jos olosuhteet ovat vaaralliset, ota meihin yhteyttä, niin aikataulutamme uudelleen ilman seuraamuksia.',
+    s1_next_btn: 'Seuraava: Ansiosi',
+    s2_h2: 'Näin paljon ansaitset',
+    s2_p: 'Ansaitset 40 € jokaisesta suoritetusta ja validoidusta tehtävästä. Maksu on automaattinen heti kun kuvat on hyväksytty. Ei laskutusta, ei perään kyselyä, ei viikkojen odottelua.',
+    earn1_label: 'Per tehtävä', earn2_label: 'Kuukaudessa (1/viikko)', earn3_label: 'Kuukaudessa (4/viikko)',
+    pay_title: 'Maksutiedot',
+    pay_p: 'Maksamme pankkisiirtona tai Revolutilla, kumpi sinulle sopii paremmin. Maksut käsitellään 24 tunnin sisällä kuvien validoinnista. Aseta ensisijainen maksutapasi profiilissasi.',
+    tax_title: 'Verohuomautus Suomessa',
+    tax_p: 'Jos ansaitset yli 500 €/kk Sunlyticsilta, saatat joutua rekisteröitymään kevytyrittäjäksi tai itsenäiseksi ammatinharjoittajaksi ja ilmoittamaan tulon Verohallinnolle. Suosittelemme, että tarkistat asian paikallisen kirjanpitäjän kanssa. Toimitamme kuukausittaiset ansaintayhteenvedot pyynnöstä.',
+    s2_next_btn: 'Seuraava: Ensimmäinen tehtäväsi',
+    s3_h2: 'Ensimmäisen tehtäväsi lentäminen',
+    s3_p: 'Tässä on tarkalleen, mitä tehdä siitä hetkestä, kun saat tehtäväilmoituksen, siihen hetkeen, kun lataat kuvasi.',
+    s3_1_h: 'Tarkista tehtävän tiedot',
+    s3_1_p: 'Osoite, katon tyyppi ja tiimimme mahdolliset huomautukset. Katso osoite Google Street View’stä ennen lähtöä, jotta tiedät mitä odottaa.',
+    s3_2_h: 'Tarkista ilmatila ja NOTAMit',
+    s3_2_p: 'Käytä droneinfo.fi-palvelua (Traficomin virallinen dronekartta) varmistaaksesi, että osoite on hallitsemattomassa ilmatilassa. Jos se on alle 1 km:n päässä lentokentästä, ota yhteyttä meihin ennen lentämistä.',
+    s3_3_h: 'Lentoasetukset',
+    s3_3_p: 'Korkeus: 30–40 m katon yläpuolella. Peitto: 80 % edestä, 70 % sivuilta. Kamerakulma: 90° suoraan alaspäin. Kuvaformaatti: JPEG täydellä resoluutiolla. Vähintään 40 kuvaa tavalliselle talolle, 80 varastorakennukselle.',
+    s3_4_h: 'Kata koko katto',
+    s3_4_p: 'Lennätä ruudukkokuvio, joka kattaa koko katon ja 5 m marginaalin joka puolelta. Älä jätä osia väliin. Puutteellinen peitto on yleisin syy kuvien hylkäämiseen.',
+    s3_5_h: 'Lataa 24 tunnin sisällä',
+    s3_5_p: 'Siirry pilottikojelautaasi, avaa tehtävä ja käytä "Lataa kuvat" -painiketta. Kuvat on ladattava 24 tunnin sisällä lennosta. Sen jälkeen tehtävä voidaan siirtää toiselle pilotille.',
+    s3_reject_title: 'Yleisimmät hylkäämisen syyt',
+    s3_reject_p: 'Epäterävät kuvat (lennätä hitaammin), puutteellinen peitto, väärässä kulmassa otetut kuvat (tarkista, että gimbaali on asetettu suoraan alaspäin) tai liian vähän kuvia. Jos kuvasi hylätään, saat ilmoituksen ja mahdollisuuden kuvata uudelleen 48 tunnin sisällä.',
+    s3_next_btn: 'Seuraava: Lentoa edeltävä tarkistuslista',
+    btn_back: 'Takaisin',
+    s4_h2: 'Lentoa edeltävä tarkistuslistasi',
+    s4_p: 'Merkitse kaikki alla olevat kohdat ennen ensimmäisen tehtäväsi hyväksymistä. Käytät tätä tarkistuslistaa myös ennen jokaista lentoa.',
+    c1_label: 'Voimassa olevat droneoperaattorin pätevyystiedot hallussa', c1_sub: 'EU:n avoimen kategorian A1/A2/A3 tai erityiskategorian STS, maakohtaisesti',
+    c2_label: 'Drone on rekisteröity kansalliselle ilmailuviranomaiselle (Suomessa Traficom)', c2_sub: 'Rekisteröintinumero on merkittävä droneen',
+    c3_label: 'Dronen akku ladattu täyteen', c3_sub: 'Ota mukaan vähintään yksi vara-akku per tehtävä',
+    c4_label: 'SD-kortti alustettu ja tyhjä', c4_sub: 'Vähintään 16 Gt vapaata tilaa suositellaan',
+    c5_label: 'Kamera-asetukset oikein', c5_sub: 'Täysi resoluutio JPEG, gimbaali 90° suoraan alaspäin, automaattinen valotus',
+    c6_label: 'Ilmatila tarkistettu (droneinfo.fi)', c6_sub: 'Varmista, ettei alueella ole aktiivisia lentokieltoja tai rajoitettuja vyöhykkeitä',
+    c7_label: 'Sää tarkistettu ja sopiva', c7_sub: 'Tuuli alle 10 m/s, ei sadetta, lämpötila yli 0 °C',
+    c8_label: 'Pilottikojelaudan kirjautuminen varmistettu', c8_sub: 'Testaa kirjautuminen osoitteessa pilot-login.html ennen ensimmäistä tehtävääsi',
+    c9_label: 'Kuvien latenta sivu testattu', c9_sub: 'Varmista, että pääset sivulle upload-mission.html ja näet latauslomakkeen',
+    c10_label: 'Hätäyhteystieto tallennettu', c10_sub: 'Tallenna info@sunlytics.fi ja +358 40 000 0000 puhelimeesi',
+    progress_initial: '0/10 suoritettu', progress_of: '/', progress_completed: ' suoritettu',
+    checklist_done: 'Kaikki valmista, seuraava vaihe', checklist_incomplete: 'Merkitse ensin kaikki kohdat',
+    s5_h2: 'Vahvista tietosi',
+    s5_p: 'Tarkista, että nämä tiedot ovat oikein. Maksusi lähetetään tässä ilmoittamallesi tilille.',
+    lbl_first: 'Etunimi', lbl_last: 'Sukunimi', lbl_phone: 'Puhelinnumero', lbl_payment: 'Ensisijainen maksutapa',
+    opt_select: 'Valitse tapa', opt_bank: 'Pankkisiirto (IBAN)', opt_revolut: 'Revolut',
+    lbl_iban: 'IBAN', lbl_revolut: 'Revolut-puhelinnumero tai käyttäjätunnus', lbl_drone: 'Dronen malli', lbl_license: 'Droneoperaattorin rekisteröinti- / todistusnumero',
+    finish_btn: 'Viimeistele asetukset',
+    err_fill: 'Täytä kaikki kentät ennen viimeistelyä.', saving: 'Tallennetaan...',
+    done_h2: 'Olet valmis lentämään.',
+    done_p: 'Profiilisi on valmis ja olet nyt aktiivinen Sunlyticsin pilottiverkostossa. Ensimmäinen tehtäväilmoituksesi voi saapua milloin tahansa.',
+    done_dashboard_btn: 'Siirry pilottikojelautaan',
+    done_questions_p: 'Kysyttävää? Lähetä sähköpostia osoitteeseen <a href="mailto:info@sunlytics.fi" style="color:var(--orange-dark);">info@sunlytics.fi</a>',
+  }
+};
+let lang = localStorage.getItem('lang') || 'en';
+function t(k) { return (T[lang] && T[lang][k]) || k; }
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('lang', l);
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (T[l][k] !== undefined) el.innerHTML = T[l][k];
+  });
+  document.getElementById('langEN').classList.toggle('active', l === 'en');
+  document.getElementById('langEN').setAttribute('aria-pressed', l === 'en');
+  document.getElementById('langFI').classList.toggle('active', l === 'fi');
+  document.getElementById('langFI').setAttribute('aria-pressed', l === 'fi');
+  updateCheckProgress();
+}
+
+let currentStep = 0;
+const TOTAL_STEPS = 6;
+
+function updateProgress() {
+  for (let i = 0; i < 5; i++) {
+    const el = document.getElementById('prog' + i);
+    el.classList.remove('done', 'active');
+    if (i < currentStep) el.classList.add('done');
+    else if (i === currentStep) el.classList.add('active');
+    const dot = el.querySelector('.prog-dot');
+    if (i < currentStep) {
+      dot.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    } else {
+      dot.textContent = i + 1;
+    }
+  }
+}
+
+function nextStep() {
+  if (currentStep < TOTAL_STEPS - 1) {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep++;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    currentStep--;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// Checklist logic
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const svg = el.querySelector('.check-box svg');
+  svg.style.display = el.classList.contains('checked') ? 'block' : 'none';
+  updateCheckProgress();
+}
+
+function updateCheckProgress() {
+  const items = document.querySelectorAll('.check-item');
+  const done = document.querySelectorAll('.check-item.checked').length;
+  document.getElementById('checkProgress').textContent = done + t('progress_of') + items.length + t('progress_completed');
+  const btn = document.getElementById('checklistNextBtn');
+  if (done === items.length) {
+    btn.disabled = false;
+    btn.innerHTML = t('checklist_done') + ' <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+  } else {
+    btn.disabled = true;
+    btn.textContent = t('checklist_incomplete');
+  }
+}
+
+// Payment method toggle
+document.getElementById('pPayment').addEventListener('change', function() {
+  document.getElementById('ibanGroup').style.display = this.value === 'bank' ? 'block' : 'none';
+  document.getElementById('revolutGroup').style.display = this.value === 'revolut' ? 'block' : 'none';
+});
+
+async function finishOnboarding() {
+  const first   = document.getElementById('pFirstName').value.trim();
+  const last    = document.getElementById('pLastName').value.trim();
+  const phone   = document.getElementById('pPhone').value.trim();
+  const payment = document.getElementById('pPayment').value;
+  const drone   = document.getElementById('pDrone').value.trim();
+  const license = document.getElementById('pLicense').value.trim();
+
+  const errEl = document.getElementById('profileErr');
+  errEl.style.display = 'none';
+
+  if (!first || !last || !phone || !payment || !drone || !license) {
+    errEl.textContent = t('err_fill');
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('finishBtn');
+  btn.disabled = true;
+  btn.textContent = t('saving');
+
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    if (user) {
+      await sb.from('pilots').update({
+        first_name: first,
+        last_name: last,
+        phone: '+358 ' + phone,
+        drone_model: drone,
+        license_number: license,
+        payment_method: payment,
+        onboarded: true,
+      }).eq('email', user.email);
+    }
+  } catch (e) {
+    // Non-blocking: proceed to success even if DB update fails
+    console.warn('Profile save error:', e);
+  }
+
+  nextStep();
+}
+
+// Apply saved language preference on load
+setLang(lang);
+</script>
+</body>
+</html>
