@@ -1,0 +1,3250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sunlytics.eu/">
+    <meta property="og:title" content="Sunlytics — Independent Solar Roof Assessment | Satellite & Drone">
+    <meta property="og:description" content="Independent pre-installation solar roof assessment for homeowners and installers. Free satellite analysis in 60 seconds, professional drone survey in 24 hours. Currently available in Finland.">
+    <meta property="og:image" content="https://sunlytics.eu/og-image.jpg">
+    <meta property="og:site_name" content="Sunlytics">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="shortcut icon" href="favicon.svg">
+    <!-- Google Analytics (replace G-XXXXXXXXXX with your real GA4 ID) -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied'});
+    </script>
+    <meta name="theme-color" content="#f7971e">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <meta name="description" content="Sunlytics — Independent pre-installation solar roof assessment for homeowners and installers. Free satellite analysis in 60 seconds, professional drone survey in 24 hours. Currently available in Finland.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://sunlytics.eu/">
+    <title>Sunlytics - Independent Solar Roof Assessment</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <style>
+        :root {
+            --orange: #f7971e;
+            --orange-dark: #ff4e00;
+            --navy: #1a1a1a;
+            --white: #ffffff;
+            --off-white: #f5f5f5;
+            --gray: #6b7280;
+            --border: #e8e8e8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--white);
+            color: var(--navy);
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 32px;
+            padding: 16px 5%;
+            background: rgba(255,255,255,0.97);
+            box-shadow: 0 1px 20px rgba(0,0,0,0.07);
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--navy);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--orange); }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            color: white !important;
+            padding: 11px 26px;
+            border-radius: 50px;
+            font-weight: 600 !important;
+            box-shadow: 0 4px 15px rgba(247,151,30,0.35);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 4px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--navy);
+            border-radius: 2px;
+        }
+
+        /* ── LANGUAGE SWITCHER ── */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+
+        .lang-switcher {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--off-white);
+            border-radius: 10px;
+            padding: 4px;
+        }
+
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            border-radius: 7px;
+            padding: 5px 9px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--gray);
+            font-family: inherit;
+            transition: all 0.18s;
+            letter-spacing: 0.4px;
+        }
+
+        .lang-btn img {
+            width: 20px;
+            height: 14px;
+            object-fit: cover;
+            border-radius: 2px;
+            display: block;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .lang-btn:hover {
+            color: var(--navy);
+            background: white;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+        }
+
+        .lang-btn.active {
+            color: var(--orange-dark);
+            background: white;
+            box-shadow: 0 1px 8px rgba(247,151,30,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .lang-btn { font-size: 11px; padding: 4px 7px; }
+            .lang-btn img { width: 18px; height: 12px; }
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 5% 60px;
+            background: #ffffff;
+        }
+
+        .hero-content { max-width: 800px; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            color: #c45000;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            border: 1px solid #ffc07a;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 5.5vw, 68px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: var(--navy);
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(15px, 2vw, 18px);
+            color: var(--gray);
+            margin-bottom: 44px;
+            line-height: 1.75;
+            max-width: 580px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            color: white;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(247,151,30,0.38);
+            transition: transform 0.25s, box-shadow 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 36px rgba(247,151,30,0.48);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--orange-dark);
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 2px solid var(--orange);
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover { background: #ffffff; }
+
+        /* ── TRUST BAR ── */
+        .trust-bar {
+            background: #ffffff;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #444;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .trust-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* ── STATS ── */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 48px 5%;
+            background: #fff;
+            border-bottom: 1px solid #e8e8e8;
+            max-width: 100%;
+        }
+
+        .stat-item {
+            background: var(--off-white);
+            border: 1px solid #e8e8e8;
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .stat-item:hover {
+            box-shadow: 0 8px 28px rgba(0,0,0,0.07);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-number {
+            font-size: 38px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 860px) {
+            .stats { grid-template-columns: repeat(2, 1fr); padding: 28px 5%; gap: 14px; }
+        }
+        @media (max-width: 480px) {
+            .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stat-item { padding: 22px 18px; }
+            .stat-number { font-size: 30px; }
+        }
+
+        /* ── SECTION COMMON ── */
+        .section-wrap {
+            text-align: center;
+            padding: 90px 5%;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: #ffffff;
+            color: #c45000;
+            padding: 5px 16px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 3.5vw, 44px);
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: var(--navy);
+            letter-spacing: -0.5px;
+        }
+
+        .section-title span {
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--gray);
+            margin-bottom: 56px;
+            line-height: 1.6;
+        }
+
+        /* ── HOW IT WORKS ── */
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        .step {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 28px;
+            width: 300px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+            border: 1px solid #efefef;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: left;
+        }
+
+        .step:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 44px rgba(255,255,255,0.1);
+        }
+
+        .step-icon {
+            width: 54px;
+            height: 54px;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 22px;
+        }
+
+        .step h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--navy);
+        }
+
+        .step p {
+            color: var(--gray);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        /* ── CALCULATOR ── */
+        .calc-bg { background: var(--off-white); }
+
+        .calculator-box {
+            max-width: 660px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            padding: 52px 44px;
+            box-shadow: 0 8px 50px rgba(255,255,255,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .calculator-box h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--navy);
+        }
+
+        .calculator-box > p {
+            color: var(--gray);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .input-wrapper .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 17px 20px 17px 46px;
+            border: 2px solid #e8e8e8;
+            border-radius: 14px;
+            font-size: 15px;
+            outline: none;
+            background: #ffffff;
+            font-family: inherit;
+            transition: border-color 0.3s;
+            color: var(--navy);
+        }
+
+        .input-wrapper input:focus { border-color: var(--orange); }
+
+        .analyze-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            color: white;
+            border: none;
+            padding: 17px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 6px 24px rgba(247,151,30,0.35);
+            transition: transform 0.25s, box-shadow 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(247,151,30,0.45);
+        }
+
+        .free-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #4caf50;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* ── PRICING ── */
+        .pricing-cards {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 24px;
+            padding: 44px 32px;
+            width: 340px;
+            border: 2px solid #efefef;
+            transition: transform 0.3s;
+            text-align: left;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--orange);
+            box-shadow: 0 8px 44px rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .pricing-card:hover { transform: translateY(-5px); }
+
+        .featured-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            color: white;
+            padding: 5px 18px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-name {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--orange);
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            font-size: 50px;
+            font-weight: 800;
+            color: var(--navy);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .plan-price span {
+            font-size: 18px;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        .plan-desc {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 28px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--navy);
+            border-bottom: 1px solid #f3f3f3;
+        }
+
+        .check {
+            color: var(--orange);
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* ── PAYMENT ── */
+        .payment-section {
+            padding: 40px 5%;
+            background: #ffffff;
+            text-align: center;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .payment-title {
+            font-size: 11px;
+            color: #9ca3af;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .payment-badge {
+            background: #f9f9f9;
+            border: 1.5px solid #efefef;
+            border-radius: 14px;
+            padding: 10px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .payment-badge:hover {
+            border-color: #f7971e;
+            box-shadow: 0 2px 12px rgba(247,151,30,0.12);
+        }
+
+        /* ── WEATHER ── */
+        .weather-widget {
+            max-width: 700px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #fff8f0 0%, #fef3e2 100%);
+            border-radius: 24px;
+            padding: 28px 32px;
+            border: 1px solid #fde8c3;
+        }
+
+        .weather-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .weather-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .drone-status {
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .status-good { background: #e8f5e9; color: #2e7d32; }
+        .status-bad  { background: #ffebee; color: #c62828; }
+        .status-loading { background: #f5f5f5; color: #888; }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .weather-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 18px 14px;
+            text-align: center;
+            border: 1px solid #fde8c3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .weather-card .w-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .weather-card .w-icon svg { stroke: white; }
+
+        .weather-card .val {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--navy);
+            line-height: 1;
+        }
+
+        .weather-note {
+            font-size: 12px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* ── QUOTE BUTTON ── */
+        .quote-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            text-decoration: none;
+            border: none;
+            padding: 18px 36px;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 8px 28px rgba(34,197,94,0.38);
+            transition: transform 0.25s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 560px) {
+            .quote-btn {
+                font-size: 13.5px;
+                padding: 16px 16px;
+                width: 100%;
+                box-sizing: border-box;
+                justify-content: center;
+            }
+        }
+
+        /* ── COVERAGE ── */
+        .coverage-section {
+            padding: 90px 5%;
+            background: #f5f5f5;
+            text-align: center;
+        }
+
+        .coverage-section .section-title { color: var(--navy); }
+        .coverage-section .section-subtitle { color: #6b7280; }
+        .coverage-section .section-tag {
+            background: #ffffff;
+            color: #c45000;
+        }
+
+        .coverage-flags {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .flag-card {
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 20px;
+            padding: 32px 40px;
+            text-align: center;
+            width: 190px;
+            min-width: 190px;
+            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+
+        .flag-card:hover { background: #f0f0f0; }
+
+        .flag-card img {
+            width: 72px;
+            height: 46px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .flag-card .country {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .flag-card .status {
+            font-size: 11px;
+            color: var(--orange);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: #f5f5f5;
+            color: #1a1a1a;
+            padding: 60px 5% 36px;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 44px;
+        }
+
+        .footer-brand p {
+            color: rgba(30,30,30,0.55);
+            font-size: 14px;
+            margin-top: 12px;
+            max-width: 240px;
+            line-height: 1.6;
+        }
+
+        .footer-links h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-links ul a {
+            color: rgba(30,30,30,0.6);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer-links ul a:hover { color: var(--orange); }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(30,30,30,0.12);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .footer-bottom p { color: rgba(30,30,30,0.5); font-size: 13px; }
+        .footer-bottom a { color: var(--orange-dark); text-decoration: none; }
+
+        /* ── MOBILE ── */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+
+            .nav-links.open {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                position: fixed;
+                top: 68px;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 24px 5%;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+                gap: 20px;
+                z-index: 199;
+                text-align: center;
+            }
+
+            .stat-item {
+                padding: 30px 20px;
+                min-width: 50%;
+                border-right: none;
+                border-bottom: 1px solid #e8e8e8;
+            }
+
+            .calculator-box { padding: 32px 20px; }
+
+            /* Trust bar: 2-column grid so icons align neatly */
+            .trust-bar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px 20px;
+                padding: 20px 5%;
+                justify-items: start;
+            }
+            .trust-item {
+                width: 100%;
+            }
+
+            .footer-top { flex-direction: column; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+            .step { width: 100%; max-width: 360px; }
+            .pricing-card { width: 100%; max-width: 360px; }
+
+            /* Weather grid: 2x2 on mobile */
+            .weather-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .btn-primary, .btn-secondary { width: 100%; max-width: 320px; justify-content: center; }
+
+            /* Partner section stats: 1 column on mobile */
+            .partner-stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            /* Results modal: 2-column grid so 3rd card is never cut off */
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            /* Testimonials: single column on mobile */
+            .testimonials-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Partner section stats: stack to 1 column on very small screens */
+            #partner-stats {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Tighten modal padding on small screens */
+            #resultsModal > div {
+                border-radius: 20px;
+            }
+            #resultsState > div:first-child {
+                border-radius: 20px 20px 0 0;
+                padding: 24px 20px !important;
+            }
+            #resultsState > div:last-child {
+                padding: 20px 16px !important;
+            }
+        }
+
+        /* ── HERO MAP SECTION ── */
+        .hero-map-section {
+            position: relative;
+            background: #ffffff;
+            padding: 56px 5% 0;
+            overflow: hidden;
+        }
+
+        .hero-map-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: none;
+            pointer-events: none;
+        }
+
+        .hero-map-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-map-text {
+            color: #ffffff;
+            padding: 56px 32px 72px;
+            border-radius: 24px;
+            background-image: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.65)), url('Solar.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-map-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: #ffffff;
+            padding: 7px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 24px;
+            white-space: nowrap;
+            backdrop-filter: blur(6px);
+        }
+
+        .hero-map-text h1 {
+            font-size: clamp(32px, 4vw, 56px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 18px;
+            letter-spacing: -1px;
+        }
+
+        .hero-map-text h1 span {
+            background: linear-gradient(135deg, #f7971e, #ff4e00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-map-text p {
+            font-size: 16px;
+            color: rgba(255,255,255,0.92);
+            line-height: 1.7;
+            margin-bottom: 32px;
+            max-width: 440px;
+        }
+
+        /* Search box floating over map */
+        .map-card {
+            background: white;
+            border-radius: 24px 24px 0 0;
+            padding: 28px 28px 0;
+            box-shadow: 0 -8px 60px rgba(0,0,0,0.25);
+            align-self: flex-end;
+        }
+
+        .map-card-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .map-search-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .map-search-input {
+            flex: 1;
+            padding: 14px 16px 14px 42px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #1a1a1a;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fafafa;
+        }
+
+        .map-search-input:focus { border-color: #f7971e; background: white; }
+
+        .map-search-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        .map-search-wrap svg {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #9ca3af;
+        }
+
+        .map-search-btn {
+            background: linear-gradient(135deg, #f7971e, #ff4e00);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(247,151,30,0.35);
+        }
+
+        .map-search-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(247,151,30,0.45); }
+
+        .map-locate-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            color: #f7971e;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .map-locate-btn:hover { background: #fef9f0; border-color: #fde8c3; }
+        .map-locate-btn.loading { animation: locate-spin 1s linear infinite; }
+        @keyframes locate-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .map-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0; right: 0;
+            background: white;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            z-index: 500;
+            max-height: 220px;
+            overflow-y: auto;
+            margin-top: 4px;
+        }
+
+        .map-suggestion-item {
+            padding: 11px 16px;
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f3f3;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.15s;
+        }
+
+        .map-suggestion-item:last-child { border-bottom: none; }
+        .map-suggestion-item:hover { background: #fef9f0; color: #f7971e; }
+
+        #heroMap {
+            width: 100%;
+            height: 420px;
+            border-radius: 0;
+        }
+
+        .map-view-toggle-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: inherit;
+            color: #1a1a1a;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+            transition: background 0.15s;
+        }
+
+        .map-view-toggle-btn:hover { background: #fef9f0; color: #f7971e; }
+
+        .map-pin-hint {
+            font-size: 12px;
+            color: #9ca3af;
+            text-align: center;
+            padding: 10px 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .map-selected-address {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: #fef9f0;
+            border: 1.5px solid #fde8c3;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: #92400e;
+            font-weight: 500;
+        }
+
+        .map-selected-address.visible { display: flex; }
+
+        .map-analyze-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f7971e, #ff4e00);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            box-shadow: 0 6px 24px rgba(247,151,30,0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .map-analyze-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(247,151,30,0.45); }
+
+        .map-free-note {
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+            padding-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .map-trust-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .map-trust-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.35);
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(6px);
+        }
+
+        /* Leaflet custom marker */
+        .custom-marker {
+            background: linear-gradient(135deg, #f7971e, #ff4e00);
+            border: 3px solid white;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            box-shadow: 0 4px 16px rgba(247,151,30,0.5);
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero-map-inner {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .hero-map-text {
+                padding-bottom: 0;
+                text-align: center;
+            }
+
+            .hero-map-text p { margin-left: auto; margin-right: auto; }
+            .map-trust-pills { justify-content: center; }
+
+            .hero-map-badge {
+                white-space: normal;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .map-card {
+                border-radius: 20px 20px 0 0;
+                padding: 20px 16px 0;
+                margin: 0;
+                width: 100%;
+            }
+
+            .map-free-note {
+                flex-wrap: wrap;
+                gap: 4px;
+                font-size: 11px;
+            }
+
+            #heroMap { height: 320px; }
+
+            .map-search-row { flex-direction: column; }
+        }
+
+    @media(max-width:640px){
+            .workflow-timeline{display:none;}
+            .workflow-step{flex-direction:column!important;text-align:center!important;}
+            .workflow-step>div:first-child,.workflow-step>div:last-child{text-align:center!important;padding:0!important;}
+        }
+        </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <a href="index.html" class="logo">
+        <span class="logo-text">SUNLYTICS</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#how-it-works"><span data-i18n="nav_how">How it Works</span></a></li>
+        <li><a href="index.html#pricing"><span data-i18n="nav_pricing">Pricing</span></a></li>
+        <li><a href="about.html"><span data-i18n="nav_about">About</span></a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="fly-for-us.html"><span data-i18n="nav_fly">Fly for Us</span></a></li>
+        <li><a href="for-installers.html">For Installers</a></li>
+        <li><a href="contact.html"><span data-i18n="nav_contact">Contact</span></a></li>
+        <li><a href="customer-dashboard.html">Track My Order</a></li>
+        <li><a href="pilot-login.html"><span data-i18n="nav_pilot">Pilot Login</span></a></li>
+        <li><a href="index.html#calculator" class="nav-cta"><span data-i18n="nav_cta">Free Analysis</span></a></li>
+    </ul>
+    <div class="nav-right">
+        <div class="lang-switcher" role="group" aria-label="Language switcher">
+            <button class="lang-btn active" id="langEN" onclick="setLang('en')" aria-label="Switch to English" aria-pressed="true">
+                <img src="uk.png" alt="English"> EN
+            </button>
+            <button class="lang-btn" id="langFI" onclick="setLang('fi')" aria-label="Switch to Finnish" aria-pressed="false">
+                <img src="Fin.png" alt="Suomi"> FI
+            </button>
+        </div>
+        <button class="hamburger" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false" id="hamburgerBtn"><span></span><span></span><span></span></button>
+    </div>
+</nav>
+
+<!-- HERO + MAP -->
+<section class="hero-map-section" id="home">
+    <div class="hero-map-inner">
+        <!-- Left: text -->
+        <div class="hero-map-text">
+            <div class="hero-map-badge">
+                <img src="Fin.png" alt="Finland" style="width:20px;height:14px;object-fit:cover;border-radius:2px;flex-shrink:0;">
+                Independent Solar Roof Assessment &nbsp;·&nbsp; Currently available in Finland
+            </div>
+            <h1 data-i18n="hero_h1">Know Your Roof's<br><span>Solar Potential</span><br>Before You Invest.</h1>
+            <p data-i18n="hero_p">Get a clear preliminary picture of your roof's solar potential in under 60 seconds using satellite imagery and AI. Need greater precision? Order a professional drone survey and get a detailed report within 24 hours of the completed flight.</p>
+            <div class="map-trust-pills">
+                <div class="map-trust-pill" style="background:rgba(247,151,30,0.15); border:1px solid rgba(247,151,30,0.4);">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <strong>60s</strong>&nbsp;— Satellite Analysis
+                </div>
+                <div class="map-trust-pill" style="background:rgba(247,151,30,0.15); border:1px solid rgba(247,151,30,0.4);">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <strong>24h</strong>&nbsp;— Drone Report
+                </div>
+                <div class="map-trust-pill">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Independent — no installer bias
+                </div>
+            </div>
+            <p style="font-size:14px; color:#6b7280; margin-bottom:20px;">Start with satellite. Upgrade to drone when you need more precision.</p>
+            <a href="#how-it-works" class="btn-secondary" style="display:inline-flex;margin-bottom:24px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+                See How It Works
+            </a>
+        </div>
+
+        <!-- Right: map card -->
+        <div class="map-card">
+            <div class="map-card-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f7971e" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span data-i18n="map_label">Search or click your address on the map</span>
+            </div>
+
+            <!-- Search row -->
+            <div class="map-search-row" style="position:relative;">
+                <div class="map-search-wrap" style="position:relative; flex:1;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" id="addressInput" class="map-search-input" style="width:100%;" placeholder="Search any address in Finland or the EU..." autocomplete="off" oninput="onMapSearchInput(this.value)" onkeydown="if(event.key==='Enter') doMapSearch()" />
+                    <div id="mapSuggestions" class="map-suggestions" style="display:none;"></div>
+                </div>
+                <button type="button" class="map-locate-btn" id="locateBtn" onclick="useMyLocation()" title="Use my current location" aria-label="Use my current location">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+                </button>
+            </div>
+
+            <!-- Selected address pill -->
+            <div id="mapSelectedAddress" class="map-selected-address">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span id="mapSelectedText" data-i18n="map_no_address">No address selected</span>
+            </div>
+
+            <!-- Map -->
+            <div id="heroMapWrap" style="position:relative;">
+                <div id="heroMap"></div>
+                <button type="button" id="mapViewToggleBtn" class="map-view-toggle-btn" onclick="toggleMapView()" style="display:none;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    <span id="mapViewToggleLabel">Map view</span>
+                </button>
+            </div>
+            <div class="map-pin-hint">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span data-i18n="map_pin_hint">Click anywhere on the map to pin your exact location</span>
+            </div>
+
+            <!-- Analyze button -->
+            <button class="map-analyze-btn" onclick="analyzeAddress()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                <span data-i18n="map_analyze_btn">Get Free Solar Analysis</span>
+            </button>
+
+            <div class="map-free-note">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                100% Free &nbsp;·&nbsp; No signup required &nbsp;·&nbsp; Instant results
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRUST BAR -->
+
+<!-- STATS -->
+<div class="stats">
+    <div class="stat-item">
+        <div class="stat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="stat-number">60s</div>
+        <div class="stat-label">Instant Results</div>
+        <div class="stat-desc">Free AI analysis of your roof in under a minute</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2c-.5.1-.9.6-.6 1.1l1.5 2.5 5.5-1L6 13l-2 1 1 2 2-1 3.5-2.5-1 5.5 2.5 1.5c.5.3 1 0 1.1-.6z"/></svg>
+        </div>
+        <div class="stat-number">24h</div>
+        <div class="stat-label">Full Drone Report</div>
+        <div class="stat-desc">Certified pilot, full PDF delivered within 24 hours</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="stat-number">&#8364;0</div>
+        <div class="stat-label">Free Analysis</div>
+        <div class="stat-desc">No sign-up, no payment required to get started</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Independent</div>
+        <div class="stat-desc">We don't install solar, and your report is never influenced by any installer</div>
+    </div>
+</div>
+
+<!-- FOR SOLAR INSTALLERS -->
+<section id="installers" style="padding:70px 5%; background:#1a1a1a; color:#fff;">
+    <div style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:center;">
+        <div>
+            <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(247,151,30,0.15); border:1px solid rgba(247,151,30,0.4); color:#f7971e; font-size:13px; font-weight:700; padding:6px 14px; border-radius:100px; margin-bottom:18px;">
+                For Solar Installers
+            </div>
+            <h2 style="font-size:clamp(24px,3.2vw,34px); font-weight:800; line-height:1.25; margin-bottom:16px;">Screen more roofs before sending your team onsite.</h2>
+            <p style="color:rgba(255,255,255,0.75); font-size:16px; line-height:1.7; margin-bottom:24px; max-width:560px;">Sunlytics combines satellite imagery, AI analysis and optional drone surveys to give your team a clear preliminary assessment before the site visit — identifying roof areas, potential obstructions and issues requiring onsite verification before you spend time on a physical inspection.</p>
+            <a href="for-installers.html" class="btn-primary" style="display:inline-flex;">Request an Installer Demo</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+                <span style="font-size:20px;">🛰️</span>
+                <div><strong style="display:block; margin-bottom:4px;">Pre-screen at scale</strong><span style="color:rgba(255,255,255,0.65); font-size:14px;">Rule out unsuitable roofs before booking a site visit.</span></div>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+                <span style="font-size:20px;">📋</span>
+                <div><strong style="display:block; margin-bottom:4px;">Standardized reports</strong><span style="color:rgba(255,255,255,0.65); font-size:14px;">Consistent preliminary data for every lead in your pipeline.</span></div>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:18px 20px; display:flex; gap:14px; align-items:flex-start;">
+                <span style="font-size:20px;">🚁</span>
+                <div><strong style="display:block; margin-bottom:4px;">Optional drone add-on</strong><span style="color:rgba(255,255,255,0.65); font-size:14px;">Order a professional survey when a lead needs more precision.</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-wrap" id="how-it-works" style="padding:80px 5%; background:#fff; text-align:center;">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f7971e,#ff4e00);color:#fff;padding:5px 14px;border-radius:50px;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:18px;">The Process</div>
+    <h2 style="font-size:clamp(24px,3vw,38px);font-weight:900;color:#1a1a1a;margin-bottom:10px;">From zero to <span style="background:linear-gradient(135deg,#f7971e,#ff4e00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">informed decision</span></h2>
+    <p style="font-size:16px;color:#6b7280;max-width:500px;margin:0 auto 48px;">Seven steps. You only need to do the first two. We handle the rest.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;max-width:980px;margin:0 auto;">
+        <div style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:16px;padding:22px 16px;text-align:center;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#f7971e,#ff4e00);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;margin:0 auto 12px;">1</div>
+            <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">You pin your address</div>
+            <div style="font-size:12px;color:#6b7280;line-height:1.5;">Free, no signup required</div>
+        </div>
+        <div style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:16px;padding:22px 16px;text-align:center;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#f7971e,#ff4e00);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;margin:0 auto 12px;">2</div>
+            <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">Free satellite estimate</div>
+            <div style="font-size:12px;color:#6b7280;line-height:1.5;">AI analysis in 60 seconds</div>
+        </div>
+        <div style="background:#fff8f0;border:1px solid #fde8c3;border-radius:16px;padding:22px 16px;text-align:center;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#f7971e,#ff4e00);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;margin:0 auto 12px;">3</div>
+            <div style="font-size:13px;font-weight:700;color:#f7971e;margin-bottom:4px;">Order drone report (€149)</div>
+            <div style="font-size:12px;color:#6b7280;line-height:1.5;">If the estimate looks promising</div>
+        </div>
+        <div style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:16px;padding:22px 16px;text-align:center;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#f7971e,#ff4e00);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;margin:0 auto 12px;">4</div>
+            <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">Pilot flies your roof</div>
+            <div style="font-size:12px;color:#6b7280;line-height:1.5;">Certified, within 24-48 hours</div>
+        </div>
+        <div style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:16px;padding:22px 16px;text-align:center;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#f7971e,#ff4e00);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;margin:0 auto 12px;">5</div>
+            <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">You receive your PDF</div>
+            <div style="font-size:12px;color:#6b7280;line-height:1.5;">Full drone report in 24 hours</div>
+        </div>
+        <div style="background:#f9f9f9;border:1px solid #e8e8e8;border-radius:16px;padding:22px 16px;text-align:center;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#f7971e,#ff4e00);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;margin:0 auto 12px;">6</div>
+            <div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px;">You choose an installer</div>
+            <div style="font-size:12px;color:#6b7280;line-height:1.5;">Compare quotes using your own data</div>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:16px;padding:22px 16px;text-align:center;">
+            <div style="width:36px;height:36px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;margin:0 auto 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div style="font-size:13px;font-weight:700;color:#16a34a;margin-bottom:4px;">Solar installed</div>
+            <div style="font-size:12px;color:#6b7280;line-height:1.5;">You made an informed decision</div>
+        </div>
+    </div>
+    <div style="display:inline-flex; align-items:center; gap:10px; margin-top:32px; background:#fff8f0; border:1px solid #fde8c3; border-radius:100px; padding:10px 22px; font-size:14px; font-weight:700; color:#c45000;">
+        Start with satellite. Upgrade to drone when you need more precision.
+    </div>
+</section>
+
+<!-- CALCULATOR anchor kept for nav links -->
+<div id="calculator"></div>
+
+<!-- PRICING -->
+<section class="section-wrap" id="pricing">
+    <div class="section-tag" data-i18n="pricing_tag">Pricing</div>
+    <div class="section-title" data-i18n="pricing_title">Simple, <span>Transparent</span> Pricing</div>
+    <div class="section-subtitle" data-i18n="pricing_subtitle">Start free, upgrade when you need full accuracy</div>
+    <div class="pricing-cards">
+        <div class="pricing-card">
+            <div class="plan-name" data-i18n="plan1_name">Free Solar Potential Estimate</div>
+            <div class="plan-price">&#8364;0 <span data-i18n="plan1_period">/ free</span></div>
+            <div class="plan-desc" data-i18n="plan1_desc">A satellite-based estimate, not a physical inspection. Perfect for a quick first look at your roof's solar potential.</div>
+            <ul class="plan-features">
+                <li><span class="check">&#10003;</span> <span data-i18n="plan1_f1">Satellite-based roof analysis</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan1_f2">Solar Score &amp; usable area</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan1_f3">Estimated payback period</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan1_f4">25-year profit projection</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan1_f5">No signup required</span></li>
+            </ul>
+            <a href="#calculator" class="btn-secondary" style="width:100%; justify-content:center; border-radius:14px;" data-i18n="plan1_cta">
+                Get Free Estimate
+            </a>
+        </div>
+        <div class="pricing-card featured">
+            <div class="featured-badge" data-i18n="plan2_badge">Most Popular</div>
+            <div class="plan-name" data-i18n="plan2_name">Drone Roof Survey</div>
+            <div class="plan-price">&#8364;149 <span data-i18n="plan2_period">/ report</span></div>
+            <div class="plan-desc" data-i18n="plan2_desc">A professional on-site drone survey with human-reviewed analysis. Delivered within 24 hours of the completed flight.</div>
+            <ul class="plan-features">
+                <li><span class="check">&#10003;</span> <span data-i18n="plan2_f1">Everything in the free estimate</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan2_f2">Professional drone survey</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan2_f3">High-resolution roof imagery</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan2_f4">Precise measurements &amp; obstructions</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan2_f5">Human-reviewed analysis</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan2_f6">Professional PDF report</span></li>
+                <li><span class="check">&#10003;</span> <span data-i18n="plan2_f7">Delivered within 24h of the flight</span></li>
+            </ul>
+            <a href="for-installers.html" class="btn-primary" style="width:100%; justify-content:center; border-radius:14px;" data-i18n="plan2_cta">
+                Order Drone Roof Survey
+            </a>
+        </div>
+        <div class="pricing-card">
+            <div class="plan-name">For Solar Installers</div>
+            <div class="plan-price" style="font-size:22px;">Request a Demo</div>
+            <div class="plan-desc">Pre-screen roofs at scale before sending your team onsite. Pay-per-report, subscription and volume pricing available — let's find what fits your pipeline.</div>
+            <ul class="plan-features">
+                <li><span class="check">&#10003;</span> Bulk address screening</li>
+                <li><span class="check">&#10003;</span> Standardized preliminary reports</li>
+                <li><span class="check">&#10003;</span> Optional drone survey add-on</li>
+                <li><span class="check">&#10003;</span> Flexible pricing for your volume</li>
+            </ul>
+            <a href="for-installers.html" class="btn-secondary" style="width:100%; justify-content:center; border-radius:14px;">
+                Request an Installer Demo
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- DRONE DIAGNOSTICS SECTION -->
+<section style="padding:90px 5%; background:#f5f5f5;">
+    <div style="max-width:860px; margin:0 auto;">
+        <!-- Header -->
+        <div style="text-align:center; margin-bottom:40px;">
+            <div style="display:inline-flex; align-items:center; gap:8px; background:#ffffff; color:#c45000; padding:5px 16px; border-radius:50px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; border:1px solid #ffc07a;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+                Independent Assessment
+            </div>
+            <div style="font-size:clamp(28px,3.5vw,44px); font-weight:800; color:#1a1a1a; letter-spacing:-0.5px; margin-bottom:14px;">Independent <span style="background:linear-gradient(135deg,var(--orange),var(--orange-dark)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Solar Assessment</span></div>
+            <div style="font-size:16px; color:#6b7280; line-height:1.7; max-width:600px; margin:0 auto 16px;">Sunlytics is a digital pre-assessment, similar to an X-ray before a full medical examination. It helps identify areas that require closer attention, but it does not replace the professional who performs the final examination.</div>
+            <div style="font-size:14px; font-weight:700; color:#c45000; max-width:600px; margin:0 auto;">Structural, electrical and final installation decisions must always be verified onsite by a qualified professional.</div>
+        </div>
+
+        <!-- Independence + ownership statement -->
+        <div style="background:white; border-radius:20px; padding:36px 32px; border:1px solid #e8e8e8; margin-bottom:32px;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:24px; margin-bottom:24px;">
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:#fff8f0; display:flex; align-items:center; justify-content:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c45000" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    </div>
+                    <div>
+                        <div style="font-size:14px; font-weight:700; color:#1a1a1a; margin-bottom:4px;">We don't install solar</div>
+                        <div style="font-size:13px; color:#6b7280; line-height:1.6;">Sunlytics is an assessment company, not an installer.</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:#fff8f0; display:flex; align-items:center; justify-content:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c45000" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    </div>
+                    <div>
+                        <div style="font-size:14px; font-weight:700; color:#1a1a1a; margin-bottom:4px;">We don't choose your installer</div>
+                        <div style="font-size:13px; color:#6b7280; line-height:1.6;">You decide who you work with, based on independent data.</div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:#fff8f0; display:flex; align-items:center; justify-content:center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c45000" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    </div>
+                    <div>
+                        <div style="font-size:14px; font-weight:700; color:#1a1a1a; margin-bottom:4px;">Your report can't be gamed</div>
+                        <div style="font-size:13px; color:#6b7280; line-height:1.6;">We may earn a small flat referral fee if you choose an installer through Sunlytics. It never changes based on your roof, your system size, or your quote — so there's no incentive to inflate your numbers.</div>
+                    </div>
+                </div>
+            </div>
+            <div style="border-top:1px solid #efefef; padding-top:22px; text-align:center;">
+                <div style="font-size:18px; font-weight:800; color:#1a1a1a; margin-bottom:6px;">Your report. Your data. Your choice.</div>
+                <div style="font-size:13px; color:#6b7280; line-height:1.7; max-width:560px; margin:0 auto;">You own your report and your property data. We share it with an installer only if and when you give explicit consent, never automatically and never without asking.</div>
+            </div>
+        </div>
+
+        <!-- RESIDENTIAL -->
+        <div style="margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#9ca3af; margin-bottom:12px;">For Homeowners</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr; gap:20px; margin-bottom:44px;">
+            <div style="background:white; border-radius:20px; padding:32px 28px; border:2px solid #efefef; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+                <div style="position:absolute; top:0; left:0; width:4px; height:100%; background:linear-gradient(180deg,var(--orange),var(--orange-dark)); border-radius:4px 0 0 4px;"></div>
+                <div>
+                    <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--orange); margin-bottom:8px;">Residential Survey</div>
+                    <div style="font-size:13px; color:#374151; line-height:1.6; max-width:400px;">A single flat rate for homes, apartments, and single-unit buildings up to 2,500 m².</div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:36px; font-weight:800; color:#1a1a1a; line-height:1; margin-bottom:4px;">&#8364;149 <span style="font-size:14px; color:#6b7280; font-weight:400;">flat rate</span></div>
+                    <div style="font-size:12px; color:#6b7280;">Up to 2,500 m²</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMMERCIAL -->
+        <div style="margin-bottom:16px;">
+            <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#9ca3af; margin-bottom:12px;">For Commercial Properties</div>
+        </div>
+        <div id="diagnostics-grid" style="display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin-bottom:28px;">
+            <div style="background:white; border-radius:20px; padding:32px 28px; border:2px solid #efefef; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:0; width:4px; height:100%; background:linear-gradient(180deg,var(--orange),var(--orange-dark)); border-radius:4px 0 0 4px;"></div>
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--orange); margin-bottom:8px;">Standard Commercial</div>
+                <div style="font-size:36px; font-weight:800; color:#1a1a1a; line-height:1; margin-bottom:6px;">&#8364;299 <span style="font-size:14px; color:#6b7280; font-weight:400;">flat rate</span></div>
+                <div style="font-size:13px; color:#6b7280; margin-bottom:16px; font-weight:500;">Up to 7,500 m²</div>
+                <div style="height:1px; background:#f3f3f3; margin-bottom:16px;"></div>
+                <div style="font-size:13px; color:#374151; line-height:1.6;">Offices, apartment complexes, and mid-size commercial roofs.</div>
+            </div>
+
+            <div style="background:linear-gradient(135deg,#1a1a1a,#2d2d2d); border-radius:20px; padding:32px 28px; border:2px solid #1a1a1a; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:-30px; right:-30px; width:120px; height:120px; background:rgba(247,151,30,0.1); border-radius:50%;"></div>
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--orange); margin-bottom:8px;">Large-Scale / Custom</div>
+                <div style="font-size:36px; font-weight:800; color:white; line-height:1; margin-bottom:6px;">Custom quote</div>
+                <div style="font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:16px; font-weight:500;">Over 7,500 m²</div>
+                <div style="height:1px; background:rgba(255,255,255,0.1); margin-bottom:16px;"></div>
+                <div style="font-size:13px; color:rgba(255,255,255,0.75); line-height:1.6;">Warehouses, logistics hubs, industrial sites, and multi-building campuses. Send us the roof area for a fixed price before you commit.</div>
+            </div>
+        </div>
+
+        <!-- Commercial use case -->
+        <div style="background:white; border-radius:20px; padding:32px; border:1px solid #e8e8e8; margin-bottom:32px;">
+            <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+                <div style="flex-shrink:0; width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--orange),var(--orange-dark)); display:flex; align-items:center; justify-content:center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/></svg>
+                </div>
+                <div>
+                    <div style="font-size:15px; font-weight:700; color:#1a1a1a; margin-bottom:6px;">Why commercial roofs are a stronger case for solar</div>
+                    <div style="font-size:14px; color:#374151; line-height:1.7;">A warehouse or production facility mostly consumes electricity during the day, exactly when a solar system produces the most. That means less energy exported to the grid at a lower rate, and a payback period that's often significantly shorter than residential. Before committing to installers or financing, an independent survey gives your team real roof data, obstruction mapping, and a production estimate to work from.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom CTA strip -->
+        <div style="background:white; border-radius:20px; padding:28px 32px; border:1px solid #e8e8e8; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;">
+            <div>
+                <div style="font-size:15px; font-weight:700; color:#1a1a1a; margin-bottom:4px;">Not sure which option fits your property?</div>
+                <div style="font-size:13px; color:#6b7280;">Send us the roof area and we'll confirm the price before you commit.</div>
+            </div>
+            <a href="contact.html" class="btn-primary" style="white-space:nowrap; flex-shrink:0;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                Get a Quote
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    @media (max-width: 600px) {
+        #diagnostics-grid { grid-template-columns: 1fr !important; }
+    }
+</style>
+
+<!-- WEATHER (secondary/operational — drone scheduling status) -->
+<section class="section-wrap" id="weather" style="padding-top:40px; padding-bottom:40px;">
+    <div class="section-tag" style="opacity:0.7;">Operational Status</div>
+    <div class="section-title" style="font-size:clamp(20px,2.4vw,28px);">Drone Flight <span>Weather Status</span></div>
+    <div class="section-subtitle">A quick look at current conditions for scheduling drone flights — not a measure of assessment accuracy.</div>
+    <div class="weather-widget">
+        <div class="weather-top">
+            <div class="weather-location">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                Helsinki, Finland
+            </div>
+            <div class="drone-status status-loading" id="droneStatus">Checking conditions...</div>
+        </div>
+        <div class="weather-grid">
+            <div class="weather-card">
+                <div class="w-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></div>
+                <div class="val" id="tempVal">--</div>
+                <div class="lbl">Temperature</div>
+            </div>
+            <div class="weather-card">
+                <div class="w-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg></div>
+                <div class="val" id="windVal">--</div>
+                <div class="lbl">Wind Speed</div>
+            </div>
+            <div class="weather-card">
+                <div class="w-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg></div>
+                <div class="val" id="rainVal">--</div>
+                <div class="lbl">Rain Chance</div>
+            </div>
+            <div class="weather-card">
+                <div class="w-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+                <div class="val" id="conditionVal" style="font-size:13px; font-weight:700; line-height:1.3;">--</div>
+                <div class="lbl">Condition</div>
+            </div>
+        </div>
+        <div class="weather-note">
+            Drone flights are scheduled when wind is below 10 m/s, rain chance below 50%, and temperature above 0&deg;C.
+        </div>
+    </div>
+</section>
+
+<!-- COVERAGE -->
+<section class="coverage-section">
+    <div class="section-tag">Coverage</div>
+    <div class="section-title">Serving <span>Finland</span></div>
+    <div class="section-subtitle" style="margin-bottom:48px;">Currently active in Finland. More EU countries coming soon.</div>
+    <div class="coverage-flags">
+        <div class="flag-card">
+            <img src="Fin.png" alt="Finland">
+            <div class="country">Finland</div>
+            <div class="status">Active Now</div>
+        </div>
+        <div class="flag-card">
+            <img src="eu.png" alt="EU">
+            <div class="country">Coming Soon EU</div>
+            <div class="status">Coming Soon</div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- OUR WORK -->
+<section style="padding:80px 5%; background:#fff; text-align:center;">
+    <div style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f7971e,#ff4e00);color:#fff;padding:5px 14px;border-radius:50px;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:18px;">Our Work</div>
+    <h2 style="font-size:clamp(24px,3vw,38px);font-weight:900;color:#1a1a1a;margin-bottom:10px;">See what a <span style="background:linear-gradient(135deg,#f7971e,#ff4e00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">report page looks like.</span></h2>
+    <p style="font-size:16px;color:#6b7280;max-width:560px;margin:0 auto 40px;">This is what you actually receive after a drone survey — not a summary card. A real page from the PDF report.</p>
+
+    <div style="max-width:920px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.08);overflow:hidden;text-align:left;">
+        <!-- Report header bar -->
+        <div style="background:#1a1a1a;color:#fff;padding:16px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <div style="font-size:13px;font-weight:800;letter-spacing:0.5px;">SUNLYTICS &nbsp;|&nbsp; Drone Roof Survey Report</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);">Sample page · Page 3 of 9</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:0;">
+            <!-- Roof diagram mock -->
+            <div style="padding:24px;border-right:1px solid #eee;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin-bottom:10px;">Roof Map & Detected Obstacles</div>
+                <svg viewBox="0 0 300 220" style="width:100%;height:auto;background:#f7f7f7;border-radius:10px;border:1px solid #eee;">
+                    <polygon points="30,30 270,30 250,190 50,190" fill="#fde8c3" stroke="#f7971e" stroke-width="2"/>
+                    <rect x="90" y="70" width="34" height="24" fill="#9ca3af" stroke="#374151" stroke-width="1"/>
+                    <text x="88" y="65" font-size="9" fill="#374151">Vent</text>
+                    <circle cx="200" cy="100" r="14" fill="#fca5a5" stroke="#dc2626" stroke-width="1.5"/>
+                    <text x="184" y="122" font-size="9" fill="#dc2626">Chimney</text>
+                    <rect x="140" y="140" width="60" height="16" fill="#93c5fd" stroke="#2563eb" stroke-width="1"/>
+                    <text x="140" y="164" font-size="9" fill="#2563eb">Skylight</text>
+                    <rect x="60" y="45" width="180" height="120" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4,3"/>
+                    <text x="62" y="42" font-size="9" fill="#16a34a" font-weight="700">Usable panel area</text>
+                </svg>
+                <div style="font-size:11px;color:#9ca3af;margin-top:8px;">Illustrative diagram — final report uses your actual drone imagery.</div>
+            </div>
+
+            <!-- Data panel -->
+            <div style="padding:24px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+                    <div>
+                        <div style="font-size:11px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Usable Roof Area</div>
+                        <div style="font-size:20px;font-weight:800;color:#1a1a1a;">158 m²</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Estimated PV Capacity</div>
+                        <div style="font-size:20px;font-weight:800;color:#1a1a1a;">11.4 kWp</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Shading</div>
+                        <div style="font-size:14px;font-weight:700;color:#16a34a;">Low — SE corner only</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Roof Pitch / Orientation</div>
+                        <div style="font-size:14px;font-weight:700;color:#1a1a1a;">32° / South-Southwest</div>
+                    </div>
+                </div>
+                <div style="background:#fff8f0;border:1px solid #fde8c3;border-radius:10px;padding:14px 16px;">
+                    <div style="font-size:12px;font-weight:800;color:#c45000;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Items Requiring Onsite Verification</div>
+                    <ul style="margin:0;padding-left:18px;font-size:13px;color:#374151;line-height:1.8;">
+                        <li>Condition of flashing around chimney</li>
+                        <li>Load-bearing capacity of roof structure</li>
+                        <li>Exact position of electrical panel & cable run</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p style="font-size:13px;color:#aaa;margin-top:20px;">Illustrative sample page — measurements and layout shown for demonstration.</p>
+</section>
+
+<!-- FAQ -->
+<section style="padding:90px 5%; background:#ffffff;">
+    <div style="max-width:740px; margin:0 auto;">
+        <div style="text-align:center; margin-bottom:56px;">
+            <div style="display:inline-block; background:#f5f5f5; color:#c45000; padding:5px 16px; border-radius:50px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px;">FAQ</div>
+            <div style="font-size:clamp(28px,3.5vw,44px); font-weight:800; color:#1a1a1a; letter-spacing:-0.5px; margin-bottom:14px;">Common <span style="background:linear-gradient(135deg,#f7971e,#ff4e00); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Questions</span></div>
+            <div style="font-size:16px; color:#6b7280; line-height:1.6;">Everything you need to know before getting started</div>
+        </div>
+
+        <div id="faqList" style="display:flex; flex-direction:column; gap:12px;">
+        </div>
+    </div>
+</section>
+
+<script>
+// ── FAQ DATA ─────────────────────────────────────────────────────
+const faqData = [
+    {
+        q: { en: "How long does the whole process take?", fi: "Kuinka kauan koko prosessi kestää?" },
+        a: { en: "The free instant analysis takes under 60 seconds. Once you order the drone survey (€149), we confirm within a few hours and schedule your flight. The drone survey itself happens within 24 to 48 hours of ordering, and your full PDF report lands in your inbox within 24 hours of the completed flight.", fi: "Ilmainen pikatarkistus kestää alle 60 sekuntia. Kun tilaat dronekartoituksen (149 €), vahvistamme tilauksen muutaman tunnin sisällä ja sovimme lennon ajankohdan. Itse dronelento tehdään 24–48 tunnin sisällä tilauksesta, ja täydellinen PDF-raportti saapuu sähköpostiisi 24 tunnin sisällä lennon valmistumisesta." }
+    },
+    {
+        q: { en: "How accurate is the free satellite analysis?", fi: "Kuinka tarkka ilmainen satelliittianalyysi on?" },
+        a: { en: "The free analysis is based on satellite imagery and solar irradiance data. It gives a solid preliminary estimate, usually within 10 to 20% of what a physical survey finds. Think of it as a fast first look, not a substitute for an on-site measurement.", fi: "Ilmainen analyysi perustuu satelliittikuviin ja auringonsäteilytietoihin. Se antaa hyvän alustavan arvion, joka on tavallisesti 10–20 % tarkkuudella verrattuna paikan päällä tehtyyn tarkastukseen. Sitä kannattaa pitää nopeana ensikatsauksena, ei korvikkeena paikan päällä tehtävälle mittaukselle." }
+    },
+    {
+        q: { en: "What does the drone report add that the satellite analysis doesn't?", fi: "Mitä dronetarkastus tuo lisää, mitä satelliittianalyysi ei anna?" },
+        a: { en: "The drone survey replaces estimates with real, human-reviewed measurements: high-resolution imagery, precise roof measurements, mapped obstructions like chimneys and vents, and a detailed shading analysis — a much closer look before anyone sets foot on your roof.", fi: "Dronekartoitus korvaa arviot todellisilla, ihmisen tarkistamilla mittauksilla: korkearesoluutioisilla kuvilla, tarkoilla kattomittauksilla, kartoitetuilla esteillä kuten piipuilla ja tuuletusaukoilla sekä yksityiskohtaisella varjostusanalyysillä — huomattavasti lähempi katsaus ennen kuin kukaan astuu katollesi." }
+    },
+    {
+        q: { en: "Does the report replace a certified structural or electrical engineer?", fi: "Korvaako raportti sertifioidun rakenne- tai sähköinsinöörin?" },
+        a: { en: "No, and it's not meant to. Our survey is a digital pre-assessment, similar to an X-ray before a full medical examination — it shows exactly where to focus, but a licensed structural or electrical engineer must always verify the property onsite before any installation decision.", fi: "Ei, eikä se ole tarkoituskaan. Kartoituksemme on digitaalinen esiarviointi, vähän kuin röntgenkuva ennen täyttä lääkärintarkastusta — se näyttää, mihin kannattaa kiinnittää huomiota, mutta lisensoidun rakenne- tai sähköinsinöörin on aina tarkistettava kohde paikan päällä ennen asennuspäätöksiä." }
+    },
+    {
+        q: { en: "What happens if satellite imagery is unavailable or outdated for my address?", fi: "Entä jos satelliittikuvaa osoitteestani ei ole saatavilla tai se on vanhentunut?" },
+        a: { en: "If imagery quality is too low or clearly outdated (for example, after a recent renovation), we'll flag this in your results and recommend ordering a drone survey directly, since it captures the current state of your roof rather than relying on historical imagery.", fi: "Jos kuvan laatu on liian huono tai se on selvästi vanhentunut (esimerkiksi äskettäisen remontin jälkeen), merkitsemme tämän tuloksiisi ja suosittelemme tilaamaan dronekartoituksen suoraan, sillä se kuvaa katon nykytilan sen sijaan, että luotettaisiin vanhaan kuvamateriaaliin." }
+    },
+    {
+        q: { en: "How does weather affect the drone flight?", fi: "Miten sää vaikuttaa dronelentoon?" },
+        a: { en: "Drone flights are only scheduled when wind is below 10 m/s, rain chance is below 50%, and temperature is above 0°C. You can check current flight conditions on this page, and we monitor weather automatically.", fi: "Dronelentoja järjestetään vain, kun tuuli on alle 10 m/s, sateen todennäköisyys alle 50 % ja lämpötila yli 0 °C. Voit tarkistaa nykyiset lento-olosuhteet tältä sivulta, ja seuraamme säätä automaattisesti." }
+    },
+    {
+        q: { en: "Who performs the drone flight?", fi: "Kuka suorittaa dronelennon?" },
+        a: { en: "A certified, insured local drone operator carries out every flight. You don't need to manage any hardware, licensing, or data extraction yourself — we handle scheduling and dispatch.", fi: "Jokaisen lennon suorittaa sertifioitu ja vakuutettu paikallinen droneoperaattori. Sinun ei tarvitse hoitaa laitteita, lupia tai datan käsittelyä itse — me hoidamme aikataulutuksen ja lennon järjestämisen." }
+    },
+    {
+        q: { en: "What happens if the pilot can't fly safely on the scheduled day?", fi: "Entä jos pilotti ei pysty lentämään turvallisesti sovittuna päivänä?" },
+        a: { en: "We reschedule at no extra cost. Safety comes first — if wind, rain, or visibility conditions aren't suitable, the flight is automatically postponed to the next suitable window.", fi: "Sovimme uuden ajankohdan ilman lisäkustannuksia. Turvallisuus on aina etusijalla — jos tuuli-, sade- tai näkyvyysolosuhteet eivät ole sopivat, lento siirretään automaattisesti seuraavaan sopivaan ajankohtaan." }
+    },
+    {
+        q: { en: "How long does the report stay useful?", fi: "Kuinka kauan raportti pysyy ajantasaisena?" },
+        a: { en: "Most roofs don't change significantly for several years, so your report typically remains a reliable reference for 2–3 years. If you've had roof work done, or a long time has passed, we recommend a fresh survey.", fi: "Useimmat katot eivät muutu merkittävästi useaan vuoteen, joten raporttisi pysyy luotettavana viitteenä tyypillisesti 2–3 vuotta. Jos katolle on tehty töitä tai aikaa on kulunut paljon, suosittelemme uutta kartoitusta." }
+    },
+    {
+        q: { en: "What exactly is included in the final PDF report?", fi: "Mitä lopullinen PDF-raportti tarkalleen sisältää?" },
+        a: { en: "Your report includes high-resolution roof imagery, a mapped diagram of detected obstacles (chimneys, vents, skylights), usable roof area, estimated PV capacity, a shading analysis, precise measurements, and a dedicated section listing items that require onsite verification by a professional.", fi: "Raporttisi sisältää korkearesoluutioiset kattokuvat, kartoitetun kaavion havaituista esteistä (piiput, tuuletusaukot, kattoikkunat), käytettävissä olevan kattopinta-alan, arvioidun aurinkopaneelien tehon, varjostusanalyysin, tarkat mittaukset sekä oman osion, jossa listataan kohteet, jotka vaativat ammattilaisen tarkistuksen paikan päällä." }
+    },
+    {
+        q: { en: "Is my data safe?", fi: "Ovatko tietoni turvassa?" },
+        a: { en: "Yes. We are GDPR compliant. Your data is never sold. Drone operators only receive the property address, nothing personal.", fi: "Kyllä. Noudatamme GDPR-vaatimuksia. Tietojasi ei koskaan myydä. Droneoperaattorit saavat käyttöönsä vain kiinteistön osoitteen, ei mitään henkilökohtaista." }
+    },
+    {
+        q: { en: "Do you cover areas outside Helsinki?", fi: "Toimitteko Helsingin ulkopuolella?" },
+        a: { en: "Yes. We have pilots across Finland, including Espoo, Tampere, Turku, Oulu, Jyväskylä and more. If you're unsure about your area, just contact us.", fi: "Kyllä. Meillä on pilotteja ympäri Suomea, mukaan lukien Espoo, Tampere, Turku, Oulu, Jyväskylä ja muut. Jos et ole varma oman alueesi kattavuudesta, ota yhteyttä." }
+    },
+    {
+        q: { en: "Can I become a drone pilot for Sunlytics?", fi: "Voinko ryhtyä Sunlyticsin dronepilotiksi?" },
+        a: { en: "Yes! If you hold a valid EU drone operator license (as required by Traficom in Finland) and have a compatible drone, you can earn €40 per mission. Visit our Fly for Us page to apply.", fi: "Kyllä! Jos sinulla on voimassa oleva EU:n droneoperaattorilupa (Traficomin vaatimusten mukaisesti) ja yhteensopiva drone, voit ansaita 40 € per tehtävä. Käy Lennä meille -sivullamme hakeaksesi." }
+    }
+];
+
+function buildFaq() {
+    const lang = localStorage.getItem('lang') || 'en';
+    const container = document.getElementById('faqList');
+    if (!container) return;
+    container.innerHTML = '';
+    faqData.forEach((item, i) => {
+        container.innerHTML += `
+            <div style="background:white; border:1px solid #e8e8e8; border-radius:16px; overflow:hidden;">
+                <button onclick="toggleFaq(${i})" style="width:100%; background:none; border:none; padding:20px 24px; text-align:left; font-size:15px; font-weight:700; color:#1a1a1a; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:16px; font-family:inherit;">
+                    <span>${item.q[lang]}</span>
+                    <span id="faqArrow${i}" style="font-size:20px; color:#f7971e; transition:transform 0.3s; flex-shrink:0;">+</span>
+                </button>
+                <div id="faqAns${i}" style="display:none; padding:0 24px 20px; font-size:14px; color:#6b7280; line-height:1.75;">${item.a[lang]}</div>
+            </div>`;
+    });
+}
+
+function toggleFaq(i) {
+    const ans = document.getElementById('faqAns' + i);
+    const arrow = document.getElementById('faqArrow' + i);
+    const isOpen = ans.style.display === 'block';
+    ans.style.display = isOpen ? 'none' : 'block';
+    arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(45deg)';
+}
+</script>
+
+<!-- COOKIE BANNER -->
+<div id="cookieBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#1a1a1a; color:white; padding:20px 5%; z-index:2000; box-shadow:0 -4px 30px rgba(0,0,0,0.3);">
+    <div style="max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:space-between;">
+        <div style="display:flex; align-items:flex-start; gap:14px; flex:1; min-width:260px;">
+            <div style="width:36px; height:36px; background:linear-gradient(135deg,#f7971e,#ff4e00); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+                <div style="font-weight:700; font-size:14px; margin-bottom:4px;">We use cookies</div>
+                <p style="font-size:13px; color:rgba(255,255,255,0.65); line-height:1.6; margin:0;">We use cookies to improve your experience and analyse site usage. By continuing you agree to our <a href="privacy.html" style="color:#f7971e; text-decoration:underline;">Privacy Policy</a>.</p>
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-shrink:0; flex-wrap:wrap;">
+            <button onclick="declineCookies()" style="background:transparent; border:1.5px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.7); padding:11px 22px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;">Decline</button>
+            <button onclick="acceptCookies()" style="background:linear-gradient(135deg,#f7971e,#ff4e00); color:white; border:none; padding:11px 26px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; box-shadow:0 4px 14px rgba(247,151,30,0.4);">Accept All</button>
+        </div>
+    </div>
+</div>
+
+<!-- PARTNER SECTION -->
+<section style="padding:90px 5%; background:#ffffff; text-align:center;">
+    <div style="display:inline-block; background:#f0fff4; color:#16a34a; padding:5px 16px; border-radius:50px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px;" data-i18n="partner_tag">Certified Partner</div>
+    <div style="font-size:clamp(28px,3.5vw,44px); font-weight:800; color:#1a1a1a; letter-spacing:-0.5px; margin-bottom:14px;" data-i18n="partner_title">Ready to <span style="background:linear-gradient(135deg,#22c55e,#16a34a); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Install?</span></div>
+    <div style="font-size:16px; color:#6b7280; margin-bottom:56px; line-height:1.6; max-width:540px; margin-left:auto; margin-right:auto;" data-i18n="partner_subtitle">Your solar report is just the first step. Our certified installation partner will turn your analysis into reality.</div>
+
+    <div style="max-width:760px; margin:0 auto; background:linear-gradient(135deg,#f0fff4,#e6f7ee); border-radius:28px; padding:48px 40px; border:1px solid #a7f3c0; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:-40px; right:-40px; width:180px; height:180px; background:rgba(34,197,94,0.08); border-radius:50%;"></div>
+        <div style="position:absolute; bottom:-60px; left:-30px; width:220px; height:220px; background:rgba(34,197,94,0.05); border-radius:50%;"></div>
+
+        <!-- Partner header -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:28px; flex-wrap:wrap;">
+            <div style="width:64px; height:64px; background:linear-gradient(135deg,#22c55e,#16a34a); border-radius:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(34,197,94,0.35); flex-shrink:0;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            </div>
+            <div style="text-align:left;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#16a34a; margin-bottom:4px;" data-i18n="partner_label">Official Sunlytics Partner</div>
+                <div style="font-size:28px; font-weight:800; color:#1a1a1a;">[Add Installation Partner Name]</div>
+            </div>
+        </div>
+
+        <!-- Stats grid -->
+        <div class="partner-stats-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;">
+            <div style="background:white; border-radius:16px; padding:20px 14px; text-align:center; border:1px solid #d1fae5;">
+                <div style="font-size:28px; font-weight:800; color:#16a34a;">500+</div>
+                <div style="font-size:12px; color:#6b7280; margin-top:4px; font-weight:500;" data-i18n="stat_installations">Installations Done</div>
+            </div>
+            <div style="background:white; border-radius:16px; padding:20px 14px; text-align:center; border:1px solid #d1fae5;">
+                <div style="font-size:28px; font-weight:800; color:#16a34a;">10yr</div>
+                <div style="font-size:12px; color:#6b7280; margin-top:4px; font-weight:500;" data-i18n="stat_warranty">Workmanship Warranty</div>
+            </div>
+            <div style="background:white; border-radius:16px; padding:20px 14px; text-align:center; border:1px solid #d1fae5;">
+                <div style="font-size:28px; font-weight:800; color:#16a34a;">4.9</div>
+                <div style="font-size:12px; color:#6b7280; margin-top:4px; font-weight:500;" data-i18n="stat_rating">Customer Rating</div>
+            </div>
+        </div>
+
+        <!-- Trust pills -->
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:32px; text-align:left;">
+            <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#374151;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                <span data-i18n="trust_certified">Licensed &amp; certified in Finland</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#374151;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                <span data-i18n="trust_visit">Free on-site visit</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#374151;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                <span data-i18n="trust_quote">No-obligation quote</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#374151;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                <span data-i18n="trust_financing">Financing available</span>
+            </div>
+        </div>
+
+        <a href="contact.html" class="quote-btn" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span data-i18n="quote_btn">Get Your Free Installation Quote</span>
+        </a>
+        <div style="font-size:12px; color:#6b7280; margin-top:14px;" data-i18n="quote_note">No payment required. An installation partner advisor will contact you within 24 hours.</div>
+        <div style="font-size:11px; color:#9ca3af; margin-top:8px; max-width:480px; margin-left:auto; margin-right:auto;" data-i18n="partner_disclosure">Sunlytics may earn a flat referral fee if you choose an installer through this page. It's disclosed here, and it never changes based on your roof, system size, or quote — so it never influences your report.</div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<!-- DISCLAIMER -->
+<div style="background:#f5f5f5;border-top:1px solid #e8e8e8;padding:14px 5%;text-align:center;">
+    <p style="font-size:12px;color:#9ca3af;max-width:760px;margin:0 auto;line-height:1.6;"><strong style="color:#6b7280;">Note:</strong> Sunlytics reports are independent assessments to help you prepare and compare. They are not structural certifications. Final installation decisions must always follow a professional on-site inspection by a licensed engineer.</p>
+</div>
+<footer>
+    <div class="footer-top">
+        <div class="footer-brand">
+            <div style="font-size:20px; font-weight:800; background:linear-gradient(135deg,var(--orange),var(--orange-dark)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:1px; text-align:left;">SUNLYTICS</div>
+            <p data-i18n="footer_tagline">Independent solar roof assessment. Currently available in Finland. Your report is never influenced by any installer.</p>
+            <div style="display:flex; gap:12px; margin-top:14px;">
+                <a href="https://g.page/r/sunlytics" target="_blank" rel="noopener" aria-label="Google Business" style="width:36px; height:36px; background:#fff; border:1.5px solid #e8e8e8; border-radius:8px; display:flex; align-items:center; justify-content:center;" title="Review us on Google">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                </a>
+                <a href="#" target="_blank" rel="noopener" aria-label="LinkedIn" style="width:36px; height:36px; background:#fff; border:1.5px solid #e8e8e8; border-radius:8px; display:flex; align-items:center; justify-content:center;" title="LinkedIn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h4>Product</h4>
+            <ul>
+                <li><a href="index.html#how-it-works"><span data-i18n="nav_how">How it Works</span></a></li>
+                <li><a href="index.html#pricing"><span data-i18n="nav_pricing">Pricing</span></a></li>
+                <li><a href="index.html#calculator"><span data-i18n="nav_cta">Free Analysis</span></a></li>
+                <li><a href="index.html#weather"><span data-i18n="nav_drone">Drone Status</span></a></li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h4>Contact</h4>
+            <ul>
+                <li><a href="contact.html"><span data-i18n="nav_contact">Contact Us</span></a></li>
+                <li><a href="mailto:info@sunlytics.fi">info@sunlytics.fi</a></li>
+                <li><a href="https://sunlytics.fi" target="_blank">sunlytics.fi</a></li>
+                <li><a href="https://maps.google.com/?q=Helsinki,Finland" target="_blank" rel="noopener">Helsinki, Finland</a></li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h4>My Account</h4>
+            <ul>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="customer-dashboard.html">Track My Order</a></li>
+                <li><a href="pilot-login.html">Pilot Login</a></li>
+                <li><a href="pilot-onboarding.html">Pilot Onboarding</a></li>
+                <li><a href="for-installers.html">For Installers</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom" style="flex-direction:column; align-items:center; text-align:center; gap:8px;">
+        <p data-i18n="footer_copy">&copy; 2026 Sunlytics. All rights reserved.</p>
+        <p style="display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; margin:0;"><a href="privacy.html" style="color:var(--orange-dark); text-decoration:none; font-size:13px;">Privacy Policy</a> <span style="opacity:0.4; color:#666;">·</span> <a href="terms.html" style="color:var(--orange-dark); text-decoration:none; font-size:13px;">Terms of Service</a> <span style="opacity:0.4; color:#666;">·</span> <a href="admin-dashboard.html" style="color:rgba(30,30,30,0.25); text-decoration:none; font-size:11px;">Admin</a></p>
+        <p style="margin:6px 0 0; font-size:11px; color:rgba(30,30,30,0.35); text-align:center; width:100%;">Sunlytics Oy &middot; Y-tunnus [ADD BUSINESS ID] &middot; VAT FI[ADD VAT NUMBER] &middot; [Add registered address], Finland</p>
+    </div>
+</footer>
+
+<!-- RESULTS MODAL -->
+<div id="resultsModal" role="dialog" aria-modal="true" aria-label="Solar analysis results" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; padding:20px; overflow-y:auto;" onclick="handleModalBackdrop(event)">
+    <div style="background:white; border-radius:28px; max-width:680px; width:100%; max-height:90vh; overflow-y:auto; position:relative; box-shadow:0 24px 80px rgba(0,0,0,0.3);" onclick="event.stopPropagation()">
+
+        <!-- Close button -->
+        <button onclick="closeModal()" aria-label="Close modal" style="position:absolute; top:16px; right:16px; background:#f5f5f5; border:none; width:36px; height:36px; border-radius:50%; cursor:pointer; color:#666; z-index:10; display:flex; align-items:center; justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+
+        <!-- Loading State -->
+        <div id="loadingState" style="padding:60px 40px; text-align:center;">
+            <div style="width:70px; height:70px; background:linear-gradient(135deg,#f7971e,#ff4e00); border-radius:50%; margin:0 auto 24px; display:flex; align-items:center; justify-content:center; animation:pulse 1.5s infinite;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            </div>
+            <h3 data-i18n="loading_title" style="font-size:22px; font-weight:800; color:#1a1a1a; margin-bottom:10px;">Analyzing Your Roof...</h3>
+            <p data-i18n="loading_desc" style="color:#6b7280; font-size:15px; margin-bottom:32px;">Processing satellite imagery and solar data for your location</p>
+            <div style="background:#f5f5f5; border-radius:50px; height:6px; overflow:hidden; max-width:300px; margin:0 auto;">
+                <div style="height:100%; background:linear-gradient(135deg,#f7971e,#ff4e00); animation:loading 2.5s ease-in-out; border-radius:50px;"></div>
+            </div>
+            <p data-i18n="loading_note" style="color:#aaa; font-size:12px; margin-top:16px;">This usually takes a few seconds</p>
+        </div>
+
+        <!-- Results State -->
+        <div id="resultsState" style="display:none;">
+
+            <!-- Header -->
+            <div style="background:linear-gradient(135deg,#1a1a1a,#333333); border-radius:28px 28px 0 0; padding:32px 36px; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:-60px; right:-40px; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle, rgba(247,151,30,0.35), transparent 70%); pointer-events:none;"></div>
+                <div style="position:absolute; bottom:-70px; right:60px; width:140px; height:140px; border-radius:50%; background:radial-gradient(circle, rgba(255,78,0,0.25), transparent 70%); pointer-events:none;"></div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; position:relative;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f7971e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                    <span data-i18n="modal_badge" style="color:rgba(255,255,255,0.65); font-size:12px; font-weight:700; letter-spacing:1.5px;">SUNLYTICS ANALYSIS</span>
+                </div>
+                <h2 data-i18n="modal_title" style="color:white; font-size:23px; font-weight:800; margin-bottom:4px; position:relative;">Solar Feasibility Report</h2>
+                <p id="resAddress" style="color:rgba(255,255,255,0.55); font-size:14px; position:relative;"></p>
+            </div>
+
+            <div style="padding:32px 36px;">
+
+                <!-- Solar Score — circular gauge -->
+                <div style="background:linear-gradient(135deg,#fffaf3,#fff5e8); border-radius:20px; padding:24px; margin-bottom:20px; border:1px solid #ffe4bd; display:flex; align-items:center; gap:22px;">
+                    <div style="position:relative; width:104px; height:104px; flex-shrink:0;">
+                        <svg width="104" height="104" viewBox="0 0 104 104" style="transform:rotate(-90deg);">
+                            <circle cx="52" cy="52" r="44" fill="none" stroke="#f2e2cc" stroke-width="10"/>
+                            <circle id="scoreRing" cx="52" cy="52" r="44" fill="none" stroke="url(#scoreGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5" style="transition:stroke-dashoffset 1.2s ease;"/>
+                            <defs>
+                                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#f7971e"/>
+                                    <stop offset="100%" stop-color="#ff4e00"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+                            <span id="resScore" style="font-size:26px; font-weight:800; color:#c45000;"></span>
+                        </div>
+                    </div>
+                    <div style="min-width:0;">
+                        <div data-i18n="score_label" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#c45000; margin-bottom:6px;">Solar Utilization Score</div>
+                        <div id="resRating" style="font-size:19px; font-weight:800; margin-bottom:6px;"></div>
+                        <div data-i18n="score_blurb" style="font-size:12.5px; color:#8a6a4a; line-height:1.4;">Your roof is a strong candidate for solar.</div>
+                    </div>
+                </div>
+
+                <!-- Spotlight: 25-Year Profit -->
+                <div style="background:linear-gradient(135deg,#f7971e,#ff4e00); border-radius:20px; padding:22px 24px; margin-bottom:14px; display:flex; align-items:center; gap:16px; box-shadow:0 10px 28px rgba(247,151,30,0.3);">
+                    <div style="width:46px; height:46px; background:rgba(255,255,255,0.22); border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div>
+                        <div data-i18n="stat_profit_label" style="font-size:11px; font-weight:700; letter-spacing:1px; color:rgba(255,255,255,0.85); margin-bottom:2px;">25-YEAR PROJECTED PROFIT</div>
+                        <div id="resProfit" style="font-size:28px; font-weight:800; color:white;"></div>
+                    </div>
+                </div>
+
+                <!-- Key Numbers Grid -->
+                <div class="results-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px;">
+                    <div style="background:#eef4ff; border-radius:16px; padding:18px 14px; border:1px solid #dbe7ff;">
+                        <div style="width:30px;height:30px;border-radius:9px;background:#dbe7ff;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b6fd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                        </div>
+                        <div data-i18n="stat_area" style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#3b6fd6; margin-bottom:6px;">Usable Area</div>
+                        <div id="resArea" style="font-size:17px; font-weight:800; color:#1a1a1a;"></div>
+                    </div>
+                    <div style="background:#f4eeff; border-radius:16px; padding:18px 14px; border:1px solid #e4d8ff;">
+                        <div style="width:30px;height:30px;border-radius:9px;background:#e4d8ff;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+                        </div>
+                        <div data-i18n="stat_payback" style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#8b5cf6; margin-bottom:6px;">Payback Period</div>
+                        <div id="resPayback" style="font-size:17px; font-weight:800; color:#1a1a1a;"></div>
+                    </div>
+                    <div style="background:#eafcf1; border-radius:16px; padding:18px 14px; border:1px solid #c9f4da;">
+                        <div style="width:30px;height:30px;border-radius:9px;background:#c9f4da;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 15a2.5 2.5 0 0 0 2.5 2h.5a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4h.5a2.5 2.5 0 0 1 2.5 2M12 6v1.5M12 16.5V18"/></svg>
+                        </div>
+                        <div data-i18n="stat_savings" style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#16a34a; margin-bottom:6px;">Annual Savings</div>
+                        <div id="resSavings" style="font-size:17px; font-weight:800; color:#1a1a1a;"></div>
+                    </div>
+                    <div style="background:#fff4e8; border-radius:16px; padding:18px 14px; border:1px solid #ffe0b3;">
+                        <div style="width:30px;height:30px;border-radius:9px;background:#ffe0b3;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e07b00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg>
+                        </div>
+                        <div data-i18n="stat_system" style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#e07b00; margin-bottom:6px;">System Size</div>
+                        <div id="resSystem" style="font-size:17px; font-weight:800; color:#1a1a1a;"></div>
+                    </div>
+                    <div style="background:#fef0f0; border-radius:16px; padding:18px 14px; border:1px solid #ffd6d6;">
+                        <div style="width:30px;height:30px;border-radius:9px;background:#ffd6d6;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e0475c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 11 14 10 22 21 10 13 10 13 2"/></svg>
+                        </div>
+                        <div data-i18n="stat_production" style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#e0475c; margin-bottom:6px;">Annual Production</div>
+                        <div id="resProduction" style="font-size:17px; font-weight:800; color:#1a1a1a;"></div>
+                    </div>
+                    <div style="background:#f5f5f5; border-radius:16px; padding:18px 14px; border:1px solid #efefef; display:flex; align-items:flex-start; gap:6px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span data-i18n="stat_area_note" style="font-size:10px; color:#9ca3af; line-height:1.4;">Google data shows total potential area. On-site obstructions or roof wear may vary.</span>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <div style="background:#f0f4ff; border-radius:14px; padding:16px 20px; margin-bottom:24px; display:flex; gap:12px; align-items:flex-start;">
+                    <span style="font-size:18px; flex-shrink:0;">&#8505;</span>
+                    <p data-i18n="disclaimer_html" style="font-size:13px; color:#555; line-height:1.6;">These are <strong>estimates based on stated assumptions</strong> — including regional solar irradiance data (PVGIS/EU JRC), electricity prices, system costs, energy consumption, financing and incentives — using a calculated 240 m² roof area. They are not a guaranteed financial outcome. Actual results depend on your specific roof size, orientation and shading. For a complete independent assessment, order your Drone Roof Survey.</p>
+                </div>
+
+                <!-- Drone Report CTA -->
+                <div style="background:linear-gradient(135deg,#ffffff,#e8e8e8); border-radius:20px; padding:28px; border:1px solid #ffc07a; text-align:center; margin-bottom:16px;">
+                    <h3 data-i18n="drone_cta_title" style="font-size:20px; font-weight:800; color:#1a1a1a; margin-bottom:8px;">Want a Full Drone Roof Survey?</h3>
+                    <p data-i18n="drone_cta_desc" style="color:#6b7280; font-size:14px; margin-bottom:20px; line-height:1.6;">A certified drone pilot will survey your roof and we'll deliver a professional PDF report within 24 hours of the completed flight, for just <strong style="color:#c45000;">&#8364;149</strong></p>
+                    <button onclick="orderDroneReport()" style="background:linear-gradient(135deg,#f7971e,#ff4e00); color:white; border:none; padding:16px 24px; border-radius:50px; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 6px 24px rgba(247,151,30,0.38); width:100%; font-family:inherit; display:flex; align-items:flex-start; justify-content:center; gap:10px; text-align:center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M10 8l6 4-6 4V8z" fill="white"/></svg>
+                        <span data-i18n="drone_cta_btn" style="text-align:center;">Order Drone Roof Survey (€149)</span>
+                    </button>
+                </div>
+
+                <!-- Installation Partner CTA -->
+                <div style="background:linear-gradient(135deg,#f0fff4,#e6f7ee); border-radius:20px; padding:24px; border:1px solid #a7f3c0; margin-bottom:16px;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                        <div style="width:40px; height:40px; background:linear-gradient(135deg,#22c55e,#16a34a); border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                        </div>
+                        <div>
+                            <div data-i18n="partner_badge" style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#16a34a;">Certified Installation Partner</div>
+                            <div style="font-size:16px; font-weight:800; color:#1a1a1a;">[Add Installation Partner Name]</div>
+                        </div>
+                        <div data-i18n="partner_quote_tag" style="margin-left:auto; background:#dcfce7; color:#16a34a; font-size:11px; font-weight:700; padding:4px 10px; border-radius:50px; text-align:center;">FREE QUOTE</div>
+                    </div>
+                    <p data-i18n="partner_desc" style="color:#374151; font-size:13px; line-height:1.6; margin-bottom:16px;">Our certified installation partner will visit your property, physically confirm your results, and provide a <strong>no-obligation installation quote</strong>. Completely free.</p>
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+                        <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#374151;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span data-i18n="partner_f1">Licensed installer</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#374151;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span data-i18n="partner_f2">10-year warranty</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#374151;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                            <span data-i18n="partner_f3">No obligation</span>
+                        </div>
+                    </div>
+                    <a href="contact.html" class="quote-btn" style="width:100%; box-sizing:border-box; font-size:15px; padding:16px 20px; background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 6px 20px rgba(34,197,94,0.35); justify-content:center; align-items:flex-start;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span data-i18n="partner_cta_btn" style="text-align:center;">Get Free Installation Quote</span>
+                    </a>
+                </div>
+
+                <button onclick="closeModal()" data-i18n="modal_close_btn" style="width:100%; background:#f5f5f5; border:none; padding:14px; border-radius:50px; font-size:14px; font-weight:600; cursor:pointer; color:#666; font-family:inherit;">
+                    Close and Analyze Another Address
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Drone Order Form State -->
+        <div id="droneFormState" style="display:none; padding:36px 36px 32px;">
+            <!-- Back button -->
+            <button onclick="showResults()" style="display:flex; align-items:center; gap:6px; background:none; border:none; color:#6b7280; font-size:14px; font-weight:600; cursor:pointer; margin-bottom:24px; padding:0; font-family:inherit;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Results
+            </button>
+
+            <div style="text-align:center; margin-bottom:28px;">
+                <div style="width:56px; height:56px; background:linear-gradient(135deg,#f7971e,#ff4e00); border-radius:16px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12 7 7"/><path d="M12 12l5-5"/><circle cx="4.5" cy="4.5" r="2.5"/><circle cx="19.5" cy="4.5" r="2.5"/><path d="M4.5 7v.5a2.5 2.5 0 0 0 2.5 2.5h10a2.5 2.5 0 0 0 2.5-2.5V7"/><path d="M8 22h8"/></svg>
+                </div>
+                <h2 style="font-size:24px; font-weight:800; color:#1a1a1a; margin-bottom:8px;">Order Your Drone Report</h2>
+                <p style="color:#6b7280; font-size:14px; line-height:1.6;">Fill in your details and we will contact you within a few hours to confirm your appointment</p>
+            </div>
+
+            <div style="margin-bottom:14px;">
+                <label style="font-size:13px; font-weight:600; color:#1a1a1a; margin-bottom:6px; display:block;">Full Name</label>
+                <input type="text" id="droneName" placeholder="Your full name" style="width:100%; padding:15px 18px; border:2px solid #e8e8e8; border-radius:12px; font-size:15px; outline:none; font-family:inherit; background:#ffffff; transition:border-color 0.2s;" onfocus="this.style.borderColor='#f7971e'" onblur="this.style.borderColor='#e8e8e8'">
+            </div>
+            <div style="margin-bottom:14px;">
+                <label style="font-size:13px; font-weight:600; color:#1a1a1a; margin-bottom:6px; display:block;">Email Address</label>
+                <input type="email" id="droneEmail" placeholder="your@email.com" style="width:100%; padding:15px 18px; border:2px solid #e8e8e8; border-radius:12px; font-size:15px; outline:none; font-family:inherit; background:#ffffff; transition:border-color 0.2s;" onfocus="this.style.borderColor='#f7971e'" onblur="this.style.borderColor='#e8e8e8'">
+            </div>
+            <div style="margin-bottom:14px;">
+                <label style="font-size:13px; font-weight:600; color:#1a1a1a; margin-bottom:6px; display:block;">Phone Number</label>
+                <div id="phoneWrap" style="display:flex; align-items:stretch; width:100%; border:2px solid #e8e8e8; border-radius:12px; overflow:hidden; background:#ffffff; transition:border-color 0.2s;">
+                    <div style="display:flex; align-items:center; gap:7px; padding:0 14px; background:#f5f5f5; border-right:2px solid #e8e8e8; font-size:15px; font-weight:600; color:#374151; white-space:nowrap; flex-shrink:0;">
+                        <img src="Fin.png" alt="Finland" style="width:20px; height:14px; object-fit:cover; border-radius:2px;"> +358
+                    </div>
+                    <input type="tel" id="dronePhone" placeholder="40 123 4567" style="flex:1; min-width:0; padding:15px 18px; border:none; border-radius:0; font-size:15px; outline:none; font-family:inherit; background:transparent;" onfocus="document.getElementById('phoneWrap').style.borderColor='#f7971e'" onblur="document.getElementById('phoneWrap').style.borderColor='#e8e8e8'">
+                </div>
+            </div>
+            <div style="margin-bottom:24px;">
+                <label style="font-size:13px; font-weight:600; color:#1a1a1a; margin-bottom:6px; display:block;">Property Address</label>
+                <input type="text" id="droneAddress" placeholder="Building address" style="width:100%; padding:15px 18px; border:2px solid #e8e8e8; border-radius:12px; font-size:15px; outline:none; font-family:inherit; background:#ffffff; transition:border-color 0.2s;" onfocus="this.style.borderColor='#f7971e'" onblur="this.style.borderColor='#e8e8e8'">
+            </div>
+
+            <button id="droneSubmitBtn" onclick="submitDroneOrder()" style="width:100%; background:linear-gradient(135deg,#f7971e,#ff4e00); color:white; border:none; padding:17px; border-radius:14px; font-size:16px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 6px 24px rgba(247,151,30,0.35); margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Confirm Order (&#8364;149)
+            </button>
+            <p style="font-size:12px; color:#aaa; text-align:center;">You will not be charged now. We will contact you to confirm details and arrange payment.</p>
+        </div>
+
+        <!-- Success State -->
+        <div id="droneSuccessState" style="display:none; padding:48px 36px; text-align:center;">
+            <div style="width:72px; height:72px; background:linear-gradient(135deg,#22c55e,#16a34a); border-radius:50%; margin:0 auto 24px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 28px rgba(34,197,94,0.35);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 style="font-size:24px; font-weight:800; color:#1a1a1a; margin-bottom:10px;">Order Received!</h2>
+            <p style="color:#6b7280; font-size:15px; line-height:1.7; margin-bottom:8px;">Thank you! We have received your drone report request.</p>
+            <p style="color:#6b7280; font-size:14px; line-height:1.7; margin-bottom:28px;">We will contact you at <strong id="successEmail"></strong> within a few hours to confirm your appointment and arrange payment.</p>
+            <div style="background:#f0fdf4; border-radius:16px; padding:20px; margin-bottom:28px; border:1px solid #bbf7d0; text-align:left;">
+                <div style="font-size:13px; color:#16a34a; font-weight:700; margin-bottom:8px;">What happens next?</div>
+                <div style="font-size:13px; color:#374151; line-height:2; display:flex; flex-direction:column; gap:6px;">
+                    <div style="display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg> We review your address &amp; schedule a local pilot</div>
+                    <div style="display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg> You confirm the appointment by phone or email</div>
+                    <div style="display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg> Drone inspection at your property</div>
+                    <div style="display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg> PDF report delivered within 24 hours</div>
+                </div>
+            </div>
+            <button onclick="closeModal()" style="background:linear-gradient(135deg,#f7971e,#ff4e00); color:white; border:none; padding:14px 36px; border-radius:50px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 6px 20px rgba(247,151,30,0.35);">Close</button>
+            <a href="customer-dashboard.html" style="display:block; margin-top:14px; font-size:13px; color:#6b7280; text-decoration:none;">Track your order status &rarr;</a>
+        </div>
+
+    </div>
+</div>
+
+
+<style>
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.85; }
+}
+@keyframes loading {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    // ── MENU ─────────────────────────────────────────────────────
+    function toggleMenu() {
+        const nav = document.getElementById('navLinks');
+        const btn = document.getElementById('hamburgerBtn');
+        const isOpen = nav.classList.toggle('open');
+        btn.setAttribute('aria-expanded', isOpen);
+    }
+
+    document.addEventListener('click', function(e) {
+        const nav = document.getElementById('navLinks');
+        if (nav.classList.contains('open') && !e.target.closest('nav')) {
+            nav.classList.remove('open');
+            document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    function handleModalBackdrop(e) {
+        if (e.target === document.getElementById('resultsModal')) closeModal();
+    }
+
+    // ── WEATHER ──────────────────────────────────────────────────
+    async function loadWeather() {
+        try {
+            const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=60.1699&longitude=24.9384&current=temperature_2m,wind_speed_10m,weather_code&hourly=precipitation_probability&timezone=Europe/Helsinki&forecast_days=1');
+            const data = await res.json();
+            const temp = data.current.temperature_2m;
+            const windKmh = data.current.wind_speed_10m;
+            const weatherCode = data.current.weather_code;
+            const windMs = (windKmh / 3.6).toFixed(1);
+
+            const currentIso = data.current.time;
+            const currentHour = currentIso.slice(0, 13);
+            const hourIndex = data.hourly.time.findIndex(t => t.startsWith(currentHour));
+            const rain = hourIndex >= 0 ? data.hourly.precipitation_probability[hourIndex] : 0;
+
+            function weatherLabel(code) {
+                if (code === 0) return 'Clear Sky';
+                if (code <= 2) return 'Partly Cloudy';
+                if (code === 3) return 'Overcast';
+                if (code <= 49) return 'Foggy';
+                if (code <= 59) return 'Drizzle';
+                if (code <= 69) return 'Rainy';
+                if (code <= 79) return 'Snowy';
+                if (code <= 84) return 'Rain Showers';
+                if (code <= 94) return 'Snow Showers';
+                return 'Thunderstorm';
+            }
+
+            document.getElementById('tempVal').textContent = temp + '\u00b0C';
+            document.getElementById('windVal').textContent = windMs + ' m/s';
+            document.getElementById('rainVal').textContent = rain + '%';
+
+            const condEl = document.getElementById('conditionVal');
+            if (condEl) condEl.textContent = weatherLabel(weatherCode);
+
+            const canFly = parseFloat(windMs) < 10 && rain < 50 && temp > 0;
+            const status = document.getElementById('droneStatus');
+            if (canFly) {
+                status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Drone Can Fly Today';
+                status.className = 'drone-status status-good';
+            } else {
+                status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Drone Flight Not Recommended';
+                status.className = 'drone-status status-bad';
+            }
+        } catch(e) {
+            document.getElementById('droneStatus').textContent = 'Weather data unavailable';
+        }
+    }
+
+    // ── ROOF ANALYSIS ─────────────────────────────────────────────
+    function analyzeAddress() {
+        const address = document.getElementById('addressInput').value.trim();
+        if (!address) {
+            document.getElementById('addressInput').style.borderColor = '#ff4e00';
+            document.getElementById('addressInput').placeholder = 'Please enter an address first';
+            return;
+        }
+        document.getElementById('addressInput').style.borderColor = '#e8e8e8';
+        showLoadingModal(address, selectedLat, selectedLng);
+    }
+
+    function showLoadingModal(address, lat, lng) {
+        document.getElementById('resAddress').textContent = address;
+        document.getElementById('resultsModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('loadingState').style.display = 'block';
+        document.getElementById('resultsState').style.display = 'none';
+        document.getElementById('droneFormState').style.display = 'none';
+        setTimeout(() => {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('resultsState').style.display = 'block';
+            generateResults(address, lat, lng);
+        }, 2500);
+    }
+
+    function generateResults(address, lat, lng) {
+        // Approximate solar irradiance figures for Finland (kWh/m²/year), illustrative —
+        // verify against PVGIS/EU JRC data before using in production.
+        const regions = [
+            { names: ['helsinki'],                       irr: 1000 },
+            { names: ['espoo'],                          irr: 1000 },
+            { names: ['vantaa'],                         irr: 995 },
+            { names: ['turku'],                          irr: 1030 },
+            { names: ['tampere'],                        irr: 970 },
+            { names: ['oulu'],                           irr: 850 },
+            { names: ['jyväskylä','jyvaskyla'],          irr: 940 },
+            { names: ['lahti'],                          irr: 975 },
+            { names: ['kuopio'],                         irr: 910 },
+            { names: ['pori'],                           irr: 1010 },
+            { names: ['vaasa'],                          irr: 990 },
+            { names: ['rovaniemi'],                      irr: 780 },
+        ];
+
+        let irradiance = 1000;
+        if (lat) {
+            // Baseline ~1000 kWh/m²/yr around Helsinki (60.17°N), declining moving north.
+            irradiance = Math.round(1000 * (1 - (lat - 60.17) * 0.025));
+        } else {
+            const addrLower = address.toLowerCase();
+            for (const r of regions) {
+                if (r.names.some(n => addrLower.includes(n))) { irradiance = r.irr; break; }
+            }
+        }
+
+        const usableArea = 240;
+        const systemKw = 48;
+        const annualProduction = 43200;
+        const annualSavings = 8640;
+        const payback = "5.2";
+        const profit25 = 216000;
+
+        const score = Math.min(100, Math.round((irradiance / 1050) * 100));
+        const lang = (typeof currentLang !== 'undefined' && i18n[currentLang]) ? currentLang : 'en';
+        const t = i18n[lang];
+        const rating = score >= 95 ? t.rating_excellent : score >= 90 ? t.rating_verygood : t.rating_good;
+        const ratingColor = score >= 95 ? '#2e7d32' : score >= 90 ? '#f7971e' : '#888';
+
+        // Remember last generated results so we can re-render in the new
+        // language immediately if the user switches while the modal is open.
+        lastResultsAddress = address;
+        lastResultsLat = lat;
+        lastResultsLng = lng;
+
+        document.getElementById('resAddress').textContent = address;
+        document.getElementById('resScore').textContent = score + '%';
+        document.getElementById('resRating').textContent = rating;
+        document.getElementById('resRating').style.color = ratingColor;
+        document.getElementById('resArea').textContent = usableArea + ' m\u00b2 (' + t.unit_calculated + ')';
+        document.getElementById('resPayback').textContent = payback + ' ' + t.unit_years;
+        document.getElementById('resProfit').textContent = '\u20ac' + profit25.toLocaleString();
+        document.getElementById('resSavings').textContent = '\u20ac' + annualSavings.toLocaleString() + t.unit_per_year;
+        document.getElementById('resSystem').textContent = systemKw + ' kWp';
+        document.getElementById('resProduction').textContent = annualProduction.toLocaleString() + ' kWh' + t.unit_per_year;
+
+        // Drive the circular gauge (circumference = 2 * pi * 44 \u2248 276.5)
+        const circumference = 276.5;
+        const offset = circumference - (circumference * score / 100);
+        document.getElementById('scoreRing').style.strokeDashoffset = offset;
+    }
+
+    let lastResultsAddress = null, lastResultsLat = null, lastResultsLng = null;
+
+    function closeModal() {
+        document.getElementById('resultsModal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    function showResults() {
+        document.getElementById('droneFormState').style.display = 'none';
+        document.getElementById('droneSuccessState').style.display = 'none';
+        document.getElementById('resultsState').style.display = 'block';
+        document.getElementById('resultsModal').scrollTop = 0;
+    }
+
+    function orderDroneReport() {
+        const address = document.getElementById('addressInput').value.trim();
+        document.getElementById('resultsState').style.display = 'none';
+        document.getElementById('droneFormState').style.display = 'block';
+        document.getElementById('droneAddress').value = address;
+        document.getElementById('resultsModal').scrollTop = 0;
+    }
+
+    async function submitDroneOrder() {
+        const name    = document.getElementById('droneName').value.trim();
+        const email   = document.getElementById('droneEmail').value.trim();
+        const phoneLocal = document.getElementById('dronePhone').value.trim();
+        const phone   = phoneLocal ? ('+358 ' + phoneLocal.replace(/^\+?358\s*/, '')) : '';
+        const address = document.getElementById('droneAddress').value.trim();
+
+        // Validate
+        let valid = true;
+        ['droneName','droneEmail','droneAddress'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value.trim()) { el.style.borderColor = '#ef4444'; valid = false; }
+            else el.style.borderColor = '#e8e8e8';
+        });
+        // Extra email format check
+        const emailEl = document.getElementById('droneEmail');
+        if (emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())) {
+            emailEl.style.borderColor = '#ef4444';
+            valid = false;
+        }
+        if (!valid) return;
+
+        const btn = document.getElementById('droneSubmitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<svg style="animation:spin .7s linear infinite;flex-shrink:0;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>&nbsp; Submitting...';
+
+        const solarScore = document.getElementById('resScore') ? document.getElementById('resScore').textContent : '';
+        const profit25   = document.getElementById('resProfit') ? document.getElementById('resProfit').textContent : '';
+        const payback    = document.getElementById('resPayback') ? document.getElementById('resPayback').textContent : '';
+
+        try {
+            // Save to Supabase
+            const { createClient } = supabase;
+            const sb = createClient('https://keeityfejyfqqsvcqfsz.supabase.co', 'sb_publishable_A6r_0AtMpEs_KBJIJJXmYg_mq66XazY');
+
+            const cityList = ['helsinki','espoo','vantaa','turku','tampere','oulu','jyväskylä','jyvaskyla','lahti','kuopio','pori','vaasa','rovaniemi'];
+            const addrLow  = address.toLowerCase();
+            const city     = cityList.find(c => addrLow.includes(c)) || 'finland';
+
+            await sb.from('missions').insert({
+                customer_name:  name,
+                customer_email: email,
+                customer_phone: phone || null,
+                address:        address,
+                city:           city.charAt(0).toUpperCase() + city.slice(1),
+                price:          149,
+                status:         'open',
+                package:        'drone',
+                notes:          'Solar score: ' + solarScore + ' | 25yr profit: ' + profit25 + ' | Payback: ' + payback,
+            });
+
+            // Send email via Formspree
+            await fetch('https://formspree.io/f/meewaldd', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    _subject: 'New Drone Roof Survey Order — ' + address,
+                    name, email, phone, address,
+                    solar_score: solarScore,
+                    profit_25yr: profit25,
+                    payback,
+                    source: 'Solar Calculator',
+                })
+            });
+        } catch(e) {
+            console.warn('Submit error:', e);
+        }
+
+        // Show success
+        document.getElementById('successEmail').textContent = email;
+        document.getElementById('droneFormState').style.display = 'none';
+        document.getElementById('droneSuccessState').style.display = 'block';
+        document.getElementById('resultsModal').scrollTop = 0;
+
+        // Reset
+        ['droneName','droneEmail','dronePhone','droneAddress'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.value = ''; el.style.borderColor = '#e8e8e8'; }
+        });
+        btn.disabled = false;
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirm Order (€149)';
+    }
+
+    function referToPartner() {
+        window.location.href = 'contact.html';
+    }
+
+    // ── COOKIES ───────────────────────────────────────────────────
+    function acceptCookies() {
+        localStorage.setItem('cookieConsent', 'accepted');
+        document.getElementById('cookieBanner').style.display = 'none';
+        // Fire analytics once user consents (replace G-XXXXXXXXXX with your GA4 ID)
+        if (typeof gtag === 'function') {
+            gtag('consent', 'update', { analytics_storage: 'granted', ad_storage: 'denied' });
+        }
+    }
+
+    function declineCookies() {
+        localStorage.setItem('cookieConsent', 'declined');
+        document.getElementById('cookieBanner').style.display = 'none';
+        if (typeof gtag === 'function') {
+            gtag('consent', 'update', { analytics_storage: 'denied', ad_storage: 'denied' });
+        }
+    }
+
+    function initCookieBanner() {
+        const el = document.getElementById('cookieBanner');
+        if (el && !localStorage.getItem('cookieConsent')) {
+            setTimeout(() => { el.style.display = 'block'; }, 1500);
+        }
+    }
+
+    // ── INIT ──────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', function() {
+        initCookieBanner();
+        loadWeather();
+    });
+</script>
+<script>
+    const i18n = {
+        en: {
+            footer_tagline: "Independent solar roof assessment. Currently available in Finland. Your report is never influenced by any installer.",
+            footer_copy: "&copy; 2026 Sunlytics. All rights reserved.",
+            // Nav
+            nav_how: "How it Works", nav_pricing: "Pricing", nav_about: "About",
+            nav_drone: "Drone Status", nav_fly: "Fly for Us", nav_contact: "Contact",
+            nav_pilot: "Pilot Login", nav_cta: "Free Analysis",
+            // Hero
+            hero_h1: "Know Your Roof's Solar Potential Before You Invest.",
+            hero_p: "Get a clear preliminary picture of your roof's solar potential in under 60 seconds using satellite imagery and AI. Need greater precision? Order a professional drone survey and get a detailed report within 24 hours of the completed flight.",
+            // Map
+            map_label: "Search or click your address on the map",
+            map_no_address: "No address selected",
+            map_pin_hint: "Click anywhere on the map to pin your exact location",
+            map_analyze_btn: "Get Free Solar Analysis",
+            // How it works
+            hiw_tag: "Process",
+            hiw_title: "How <span>Sunlytics</span> Works",
+            hiw_subtitle: "Three simple steps to complete solar clarity",
+            step1_title: "Enter Your Address",
+            step1_desc: "Type your building address anywhere in Finland. Our system instantly pulls satellite imagery of your roof.",
+            step2_title: "Get Instant Results",
+            step2_desc: "Receive your Solar Score, usable roof area, estimated payback period and 25-year profit projection, based on stated assumptions. Completely free, in seconds.",
+            step3_title: "Get Drone Roof Survey",
+            step3_desc: "Need greater precision? We dispatch a certified drone pilot to your site and deliver your Drone Roof Survey within 24 hours of the completed flight.",
+            // Pricing
+            pricing_tag: "Pricing",
+            pricing_title: "Simple, <span>Transparent</span> Pricing",
+            pricing_subtitle: "Start free, upgrade when you need on-site precision",
+            plan1_name: "Free Solar Potential Estimate", plan1_period: "/ free",
+            plan1_desc: "A satellite-based estimate, not a physical inspection. Perfect for a quick first look at your roof's solar potential.",
+            plan1_f1: "Satellite-based roof analysis", plan1_f2: "Solar Score & usable area",
+            plan1_f3: "Estimated payback period", plan1_f4: "25-year profit projection (estimate)",
+            plan1_f5: "No signup required", plan1_cta: "Get Free Estimate",
+            plan2_badge: "Most Popular", plan2_name: "Drone Roof Survey", plan2_period: "/ report",
+            plan2_desc: "High-resolution data collection and assessment: a professional on-site drone survey with human-reviewed analysis. Delivered within 24 hours of the completed flight.",
+            plan2_f1: "Everything in the free estimate", plan2_f2: "Professional drone survey",
+            plan2_f3: "High-resolution roof imagery", plan2_f4: "Precise measurements & obstructions",
+            plan2_f5: "Human-reviewed analysis", plan2_f6: "Professional PDF report",
+            plan2_f7: "Delivered within 24h of the flight",
+            plan2_cta: "Order Drone Roof Survey",
+            // Partner
+            partner_tag: "Certified Partner",
+            partner_title: "Ready to <span style=\"background:linear-gradient(135deg,#22c55e,#16a34a); -webkit-background-clip:text; -webkit-text-fill-color:transparent;\">Install?</span>",
+            partner_subtitle: "Your solar report is just the first step. Our certified installation partner will turn your analysis into reality.",
+            partner_label: "Official Sunlytics Partner",
+            stat_installations: "Installations Done", stat_warranty: "Workmanship Warranty", stat_rating: "Customer Rating",
+            trust_certified: "Licensed & certified in Finland",
+            trust_visit: "Free on-site visit",
+            trust_quote: "No-obligation quote",
+            trust_financing: "Financing available",
+            quote_btn: "Get Your Free Installation Quote",
+            quote_note: "No payment required. An installation partner advisor will contact you within 24 hours.",
+            partner_disclosure: "Sunlytics may earn a flat referral fee if you choose an installer through this page. It's disclosed here, and it never changes based on your roof, system size, or quote — so it never influences your report.",
+            cookie_text: 'We use cookies to improve your experience and analyze site traffic. By continuing, you agree to our <a href="privacy.html" style="color:#f7971e;text-decoration:underline;">Privacy Policy</a>.',
+            cookie_decline: "Decline",
+            cookie_accept: "Accept",
+            // Results modal
+            loading_title: "Analyzing Your Roof...",
+            loading_desc: "Processing satellite imagery and solar data for your location",
+            loading_note: "This usually takes a few seconds",
+            modal_badge: "SUNLYTICS ANALYSIS",
+            modal_title: "Solar Feasibility Report",
+            score_label: "Solar Utilization Score",
+            score_blurb: "Your roof is a strong candidate for solar.",
+            rating_excellent: "Excellent", rating_verygood: "Very Good", rating_good: "Good",
+            unit_years: "Years (est.)", unit_calculated: "calculated", unit_per_year: "/yr",
+            stat_area: "Usable Area",
+            stat_area_note: "Google data shows total potential area. On-site obstructions or roof wear may vary.",
+            stat_payback: "Estimated Payback Period",
+            stat_profit_label: "ESTIMATED 25-YEAR PROFIT",
+            stat_savings: "Annual Savings",
+            stat_system: "System Size",
+            stat_production: "Annual Production",
+            disclaimer_html: "These are <strong>estimates based on stated assumptions</strong> — including regional solar irradiance data (PVGIS/EU JRC), electricity prices, system costs, energy consumption, financing and incentives — using a calculated 240\u00a0m\u00b2 roof area. They are not a guaranteed financial outcome. Actual results depend on your specific roof size, orientation and shading. For a complete independent assessment, order your Drone Roof Survey.",
+            drone_cta_title: "Want a Full Drone Roof Survey?",
+            drone_cta_desc: "A certified drone pilot will collect high-resolution imagery and roof data, and we'll deliver a professional PDF report within 24 hours of the completed flight, for just <strong style=\"color:#c45000;\">\u20ac149</strong>",
+            drone_cta_btn: "Order Drone Roof Survey (\u20ac149)",
+            partner_badge: "Certified Installation Partner",
+            partner_quote_tag: "FREE QUOTE",
+            partner_desc: "Our certified installation partner will visit your property, physically confirm your results, and provide a <strong>no-obligation installation quote</strong>. Completely free.",
+            partner_f1: "Licensed installer", partner_f2: "10-year warranty", partner_f3: "No obligation",
+            partner_cta_btn: "Get Free Installation Quote",
+            modal_close_btn: "Close and Analyze Another Address",
+        },
+        fi: {
+            footer_tagline: "Riippumaton aurinkokattoarviointi. Saatavilla tällä hetkellä Suomessa. Raporttiisi ei koskaan vaikuta yksikään urakoitsija.",
+            footer_copy: "&copy; 2026 Sunlytics. Kaikki oikeudet pidätetään.",
+            // Nav
+            nav_how: "Miten toimii", nav_pricing: "Hinnat", nav_about: "Tietoa meistä",
+            nav_drone: "Dronen tila", nav_fly: "Lennä meille", nav_contact: "Yhteystiedot",
+            nav_pilot: "Pilottikirjautuminen", nav_cta: "Ilmainen analyysi",
+            // Hero
+            hero_h1: "Selvitä kattosi aurinkopotentiaali ennen kuin investoit.",
+            hero_p: "Saat selkeän alustavan kuvan kattosi aurinkopotentiaalista alle 60 sekunnissa satelliittikuvien ja tekoälyn avulla. Tarvitsetko tarkempaa tietoa? Tilaa ammattimainen dronekartoitus ja saat yksityiskohtaisen raportin 24 tunnin sisällä lennon valmistumisesta.",
+            // Map
+            map_label: "Hae tai napsauta osoitettasi kartalla",
+            map_no_address: "Osoitetta ei ole valittu",
+            map_pin_hint: "Napsauta karttaa merkitäksesi tarkan sijaintisi",
+            map_analyze_btn: "Hanki ilmainen aurinkoanalyysi",
+            // How it works
+            hiw_tag: "Prosessi",
+            hiw_title: "Miten <span>Sunlytics</span> toimii",
+            hiw_subtitle: "Kolme yksinkertaista askelta täyteen selkeyteen aurinkoenergiasta",
+            step1_title: "Anna osoitteesi",
+            step1_desc: "Kirjoita rakennuksesi osoite missä tahansa Suomessa. Järjestelmämme hakee heti satelliittikuvat katostasi.",
+            step2_title: "Saat tulokset heti",
+            step2_desc: "Saat Solar Score -pisteesi, käytettävissä olevan kattopinta-alan, arvioidun takaisinmaksuajan ja 25 vuoden tuottoarvion annettujen oletusten pohjalta. Täysin ilmaiseksi, sekunneissa.",
+            step3_title: "Tilaa dronekartoitus",
+            step3_desc: "Tarvitsetko tarkempaa tietoa? Lähetämme sertifioidun dronepilotin kohteeseesi ja toimitamme dronekartoituksesi 24 tunnin sisällä lennon valmistumisesta.",
+            // Pricing
+            pricing_tag: "Hinnat",
+            pricing_title: "Yksinkertainen, <span>läpinäkyvä</span> hinnoittelu",
+            pricing_subtitle: "Aloita ilmaiseksi, päivitä kun tarvitset tarkkuutta paikan päällä",
+            plan1_name: "Ilmainen aurinkopotentiaalin arvio", plan1_period: "/ ilmainen",
+            plan1_desc: "Satelliittipohjainen arvio, ei fyysinen tarkastus. Täydellinen nopeaan ensikatsaukseen kattosi aurinkopotentiaaliin.",
+            plan1_f1: "Satelliittipohjainen kattoanalyysi", plan1_f2: "Solar Score ja käytettävissä oleva pinta-ala",
+            plan1_f3: "Arvioitu takaisinmaksuaika", plan1_f4: "25 vuoden tuottoarvio (estimaatti)",
+            plan1_f5: "Ei vaadi rekisteröitymistä", plan1_cta: "Hanki ilmainen arvio",
+            plan2_badge: "Suosituin", plan2_name: "Dronekartoitus", plan2_period: "/ raportti",
+            plan2_desc: "Korkearesoluutioista tiedonkeruuta ja arviointia: ammattimainen paikan päällä tehtävä dronekartoitus ihmisen tarkistamalla analyysillä. Toimitetaan 24 tunnin sisällä lennon valmistumisesta.",
+            plan2_f1: "Kaikki ilmaisesta arviosta", plan2_f2: "Ammattimainen dronekartoitus",
+            plan2_f3: "Korkearesoluutioiset kattokuvat", plan2_f4: "Tarkat mittaukset ja esteet",
+            plan2_f5: "Ihmisen tarkistama analyysi", plan2_f6: "Ammattimainen PDF-raportti",
+            plan2_f7: "Toimitetaan 24 tunnin sisällä lennosta",
+            plan2_cta: "Tilaa dronekartoitus",
+            // Partner
+            partner_tag: "Sertifioitu kumppani",
+            partner_title: "Valmis <span style=\"background:linear-gradient(135deg,#22c55e,#16a34a); -webkit-background-clip:text; -webkit-text-fill-color:transparent;\">asennukseen?</span>",
+            partner_subtitle: "Aurinkoraporttisi on vasta ensimmäinen askel. Sertifioitu asennuskumppanimme muuttaa analyysisi todeksi.",
+            partner_label: "Sunlyticsin virallinen kumppani",
+            stat_installations: "Tehtyjä asennuksia", stat_warranty: "Työn takuu", stat_rating: "Asiakasarvio",
+            trust_certified: "Lisensoitu ja sertifioitu Suomessa",
+            trust_visit: "Ilmainen käynti paikan päällä",
+            trust_quote: "Tarjous ilman sitoumusta",
+            trust_financing: "Rahoitusvaihtoehtoja saatavilla",
+            quote_btn: "Hanki ilmainen asennustarjous",
+            quote_note: "Ei vaadi maksua. Asennuskumppanin edustaja ottaa sinuun yhteyttä 24 tunnin sisällä.",
+            partner_disclosure: "Sunlytics voi saada kiinteän välityspalkkion, jos valitset urakoitsijan tämän sivun kautta. Tämä kerrotaan tässä avoimesti, eikä se koskaan muutu kattosi, järjestelmän koon tai tarjouksen mukaan — joten se ei koskaan vaikuta raporttiisi.",
+            cookie_text: 'Käytämme evästeitä parantaaksemme kokemustasi ja analysoidaksemme sivuston liikennettä. Jatkamalla hyväksyt <a href="privacy.html" style="color:#f7971e;text-decoration:underline;">tietosuojakäytäntömme</a>.',
+            cookie_decline: "Hylkää",
+            cookie_accept: "Hyväksy",
+            // Results modal
+            loading_title: "Analysoimme kattoasi...",
+            loading_desc: "Käsittelemme satelliittikuvia ja aurinkotietoja sijaintiasi varten",
+            loading_note: "Tämä kestää yleensä muutaman sekunnin",
+            modal_badge: "SUNLYTICS-ANALYYSI",
+            modal_title: "Aurinkoenergian soveltuvuusraportti",
+            score_label: "Aurinkohyödyntämispiste",
+            score_blurb: "Kattosi on vahva ehdokas aurinkoenergialle.",
+            rating_excellent: "Erinomainen", rating_verygood: "Erittäin hyvä", rating_good: "Hyvä",
+            unit_years: "vuotta (arvio)", unit_calculated: "laskettu", unit_per_year: "/vuosi",
+            stat_area: "Käytettävissä oleva pinta-ala",
+            stat_area_note: "Googlen data näyttää kokonaispotentiaalisen pinta-alan. Esteet paikan päällä tai katon kuluminen voivat vaikuttaa tulokseen.",
+            stat_payback: "Arvioitu takaisinmaksuaika",
+            stat_profit_label: "ARVIOITU 25 VUODEN TUOTTO",
+            stat_savings: "Vuosisäästöt",
+            stat_system: "Järjestelmän koko",
+            stat_production: "Vuosituotanto",
+            disclaimer_html: "Nämä ovat <strong>arvioita, jotka perustuvat annettuihin oletuksiin</strong> — mukaan lukien alueellinen auringonsäteilytieto (PVGIS/EU JRC), sähkön hinnat, järjestelmän kustannukset, energiankulutus, rahoitus ja tuet — käyttäen laskettua 240\u00a0m\u00b2 kattopinta-alaa. Ne eivät ole taattu taloudellinen lopputulos. Todelliset tulokset riippuvat kattosi tarkasta koosta, suunnasta ja varjostuksesta. Saadaksesi täyden riippumattoman arvion, tilaa dronekartoitus.",
+            drone_cta_title: "Haluatko täyden dronekartoituksen?",
+            drone_cta_desc: "Sertifioitu dronepilotti kerää korkearesoluutioisen kuvan ja kattotiedot, ja toimitamme ammattimaisen PDF-raportin 24 tunnin sisällä lennon valmistumisesta, hintaan vain <strong style=\"color:#c45000;\">\u20ac149</strong>",
+            drone_cta_btn: "Tilaa dronekartoitus (\u20ac149)",
+            partner_badge: "Sertifioitu asennuskumppani",
+            partner_quote_tag: "ILMAINEN TARJOUS",
+            partner_desc: "Sertifioitu asennuskumppanimme käy kiinteistössäsi, vahvistaa tuloksesi fyysisesti ja antaa <strong>tarjouksen ilman sitoumusta</strong>. Täysin ilmaiseksi.",
+            partner_f1: "Lisensoitu urakoitsija", partner_f2: "10 vuoden takuu", partner_f3: "Ei sitoumusta",
+            partner_cta_btn: "Hanki ilmainen asennustarjous",
+            modal_close_btn: "Sulje ja analysoi toinen osoite",
+        }
+    };
+    let currentLang = localStorage.getItem('lang') || 'en';
+
+    function setLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('lang', lang);
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (i18n[lang] && i18n[lang][key] !== undefined) {
+                el.innerHTML = i18n[lang][key];
+            }
+        });
+        // Update input placeholder
+        const addrInput = document.getElementById('addressInput');
+        if (addrInput) addrInput.placeholder = lang === 'fi' ? 'esim. Mannerheimintie 10, Helsinki' : 'e.g. Mannerheimintie 10, Helsinki';
+        const enBtn = document.getElementById('langEN');
+        const fiBtn = document.getElementById('langFI');
+        enBtn.classList.toggle('active', lang === 'en');
+        fiBtn.classList.toggle('active', lang === 'fi');
+        enBtn.setAttribute('aria-pressed', lang === 'en');
+        fiBtn.setAttribute('aria-pressed', lang === 'fi');
+        // Rebuild FAQ in selected language
+        if (typeof buildFaq === 'function') buildFaq();
+        // If a results report is currently on screen, re-render its dynamic
+        // numbers (rating word, units) in the newly selected language too.
+        const resultsState = document.getElementById('resultsState');
+        if (resultsState && resultsState.style.display !== 'none' && typeof lastResultsAddress !== 'undefined' && lastResultsAddress) {
+            generateResults(lastResultsAddress, lastResultsLat, lastResultsLng);
+        }
+    }
+
+    function initLang() { setLang(currentLang); buildFaq(); }
+
+    document.addEventListener('DOMContentLoaded', initLang);
+</script>
+
+<script>
+// ── MAP INIT ──────────────────────────────────────────────
+let heroMap, heroMarker;
+let selectedLat = null, selectedLng = null;
+
+const MARKER_HTML = `<div style="width:26px;height:26px;background:linear-gradient(135deg,#f7971e,#ff4e00);border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 14px rgba(247,151,30,0.6);"></div>`;
+
+function getMarkerIcon() {
+    return L.divIcon({ className: '', html: MARKER_HTML, iconSize: [26, 26], iconAnchor: [13, 26] });
+}
+
+let streetLayer, satelliteLayer, satelliteLabels;
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof L === 'undefined') { console.warn('Leaflet not loaded.'); return; }
+
+    heroMap = L.map('heroMap', { zoomControl: true, scrollWheelZoom: false }).setView([64.5, 26.0], 5);
+
+    // Clean white map — Google Maps style (CartoDB Voyager) — default view
+    streetLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20,
+        maxNativeZoom: 19
+    }).addTo(heroMap);
+
+    // Satellite imagery — switched to once an address/location is selected
+    satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+        maxZoom: 20,
+        maxNativeZoom: 19
+    });
+
+    // Reference overlay — country borders, place names, road/city labels drawn on
+    // top of the satellite imagery so it's always clear exactly where you are.
+    satelliteLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Labels &copy; Esri',
+        maxZoom: 20,
+        maxNativeZoom: 19
+    });
+
+    // Esri's free imagery has patchy high-zoom coverage in some regions (e.g. rural
+    // Southeast Europe). If tiles fail to load at the current zoom, step back one level
+    // until real imagery appears, instead of showing blank "no data" tiles.
+    let satelliteStepDownTimer = null;
+    satelliteLayer.on('tileerror', function() {
+        if (!heroMap.hasLayer(satelliteLayer)) return;
+        if (satelliteStepDownTimer) return; // already handling a step-down
+        satelliteStepDownTimer = setTimeout(function() {
+            satelliteStepDownTimer = null;
+            if (heroMap.hasLayer(satelliteLayer) && heroMap.getZoom() > 14) {
+                heroMap.setZoom(heroMap.getZoom() - 1);
+            }
+        }, 400);
+    });
+
+    // Click on map to pin exact location
+    heroMap.on('click', function(e) {
+        const { lat, lng } = e.latlng;
+        setMapPin(lat, lng);
+        reverseGeocode(lat, lng);
+    });
+});
+
+let isSatelliteView = false;
+
+function showSatelliteView() {
+    if (!heroMap || !streetLayer || !satelliteLayer) return;
+    if (heroMap.hasLayer(streetLayer)) heroMap.removeLayer(streetLayer);
+    if (!heroMap.hasLayer(satelliteLayer)) satelliteLayer.addTo(heroMap);
+    if (satelliteLabels && !heroMap.hasLayer(satelliteLabels)) satelliteLabels.addTo(heroMap);
+    isSatelliteView = true;
+    updateMapViewToggleLabel();
+}
+
+function showStreetView() {
+    if (!heroMap || !streetLayer || !satelliteLayer) return;
+    if (heroMap.hasLayer(satelliteLayer)) heroMap.removeLayer(satelliteLayer);
+    if (satelliteLabels && heroMap.hasLayer(satelliteLabels)) heroMap.removeLayer(satelliteLabels);
+    if (!heroMap.hasLayer(streetLayer)) streetLayer.addTo(heroMap);
+    isSatelliteView = false;
+    updateMapViewToggleLabel();
+}
+
+function toggleMapView() {
+    if (isSatelliteView) { showStreetView(); } else { showSatelliteView(); }
+}
+
+function toggleViewToggleBtn(show) {
+    const btn = document.getElementById('mapViewToggleBtn');
+    if (btn) btn.style.display = show ? 'flex' : 'none';
+}
+
+function updateMapViewToggleLabel() {
+    const label = document.getElementById('mapViewToggleLabel');
+    if (label) label.textContent = isSatelliteView ? 'Map view' : 'Satellite';
+}
+
+function setMapPin(lat, lng) {
+    if (typeof L === 'undefined') return;
+    selectedLat = lat;
+    selectedLng = lng;
+    if (heroMarker) {
+        heroMarker.setLatLng([lat, lng]);
+    } else {
+        heroMarker = L.marker([lat, lng], { icon: getMarkerIcon() }).addTo(heroMap);
+    }
+    heroMap.setView([lat, lng], 18); // zoom to rooftop level
+    showSatelliteView();
+    toggleViewToggleBtn(true);
+}
+
+async function reverseGeocode(lat, lng) {
+    try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`);
+        const data = await res.json();
+        const a = data.address || {};
+        // Build a clean short label: house number + road + city
+        const parts = [
+            (a.road || '') + (a.house_number ? ' ' + a.house_number : ''),
+            a.city || a.town || a.village || a.municipality || '',
+        ].filter(Boolean);
+        const label = parts.length ? parts.join(', ') : data.display_name;
+        document.getElementById('addressInput').value = label;
+        showSelectedAddress(label);
+    } catch(e) {
+        const label = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+        document.getElementById('addressInput').value = label;
+        showSelectedAddress(label);
+    }
+}
+
+function showSelectedAddress(addr) {
+    const el = document.getElementById('mapSelectedAddress');
+    const txt = document.getElementById('mapSelectedText');
+    if (!el || !txt) return;
+    txt.textContent = addr.length > 60 ? addr.substring(0, 60) + '…' : addr;
+    el.classList.add('visible');
+}
+
+// ── USE MY LOCATION ───────────────────────────────────────
+function useMyLocation() {
+    const btn = document.getElementById('locateBtn');
+    if (!navigator.geolocation) {
+        alert('Location is not supported by your browser. Please search or click your address on the map instead.');
+        return;
+    }
+    btn.classList.add('loading');
+    navigator.geolocation.getCurrentPosition(
+        function(pos) {
+            btn.classList.remove('loading');
+            const { latitude, longitude } = pos.coords;
+            setMapPin(latitude, longitude);
+            reverseGeocode(latitude, longitude);
+        },
+        function(err) {
+            btn.classList.remove('loading');
+            alert('Could not get your location. Please allow location access, or search/click your address on the map.');
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
+}
+
+// ── SUGGESTIONS ───────────────────────────────────────────
+let suggTimeout;
+let currentSuggestions = [];
+
+function onMapSearchInput(val) {
+    clearTimeout(suggTimeout);
+    const box = document.getElementById('mapSuggestions');
+    if (val.length < 2) { box.style.display = 'none'; currentSuggestions = []; return; }
+    suggTimeout = setTimeout(() => fetchSuggestions(val), 280);
+}
+
+function formatSuggestion(r) {
+    const a = r.address || {};
+    const road = a.road || a.pedestrian || a.path || '';
+    const num  = a.house_number || '';
+    const city = a.city || a.town || a.village || a.municipality || '';
+    const post = a.postcode || '';
+    const line1 = road ? (road + (num ? ' ' + num : '')) : r.display_name.split(',')[0];
+    const line2 = [post, city].filter(Boolean).join(' ');
+    return { line1, line2 };
+}
+
+function photonToNominatim(feature) {
+    const p = feature.properties || {};
+    const coords = (feature.geometry && feature.geometry.coordinates) || [0, 0];
+    return {
+        lat: coords[1],
+        lon: coords[0],
+        address: {
+            road: p.street || p.name || '',
+            house_number: p.housenumber || '',
+            city: p.city || p.town || p.village || p.district || '',
+            postcode: p.postcode || ''
+        },
+        display_name: [p.name, p.street, p.housenumber, p.postcode, p.city, p.country].filter(Boolean).join(', ')
+    };
+}
+
+async function fetchSuggestions(query) {
+    try {
+        const res = await fetch(
+            `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=8&lang=en`
+        );
+        const data = await res.json();
+        const results = (data.features || []).map(photonToNominatim);
+        const box = document.getElementById('mapSuggestions');
+        if (!results.length) { box.style.display = 'none'; return; }
+
+        currentSuggestions = results;
+        box.innerHTML = results.map((r, i) => {
+            const { line1, line2 } = formatSuggestion(r);
+            return `
+            <div class="map-suggestion-item" data-idx="${i}" onclick="selectSuggestion(${i})">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f7971e" stroke-width="2" style="flex-shrink:0;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                <div>
+                    <div style="font-weight:600; color:#1a1a1a; font-size:13px;">${line1}</div>
+                    ${line2 ? `<div style="font-size:11px; color:#9ca3af; margin-top:1px;">${line2}</div>` : ''}
+                </div>
+            </div>`;
+        }).join('');
+        box.style.display = 'block';
+    } catch(e) {}
+}
+
+function selectSuggestion(idx) {
+    const r = currentSuggestions[idx];
+    if (!r) return;
+    const { line1, line2 } = formatSuggestion(r);
+    const label = line2 ? `${line1}, ${line2}` : line1;
+    document.getElementById('addressInput').value = label;
+    document.getElementById('mapSuggestions').style.display = 'none';
+    currentSuggestions = [];
+    const lat = parseFloat(r.lat), lng = parseFloat(r.lon);
+    setMapPin(lat, lng);
+    showSelectedAddress(label);
+}
+
+// Keyboard: Enter on input triggers search; Arrow keys navigate suggestions
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('addressInput');
+    if (!input) return;
+    input.addEventListener('keydown', function(e) {
+        const box = document.getElementById('mapSuggestions');
+        const items = box ? box.querySelectorAll('.map-suggestion-item') : [];
+        const active = box ? box.querySelector('.map-suggestion-item.hovered') : null;
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = active ? active.nextElementSibling : items[0];
+            if (active) active.classList.remove('hovered');
+            if (next) { next.classList.add('hovered'); next.scrollIntoView({ block: 'nearest' }); }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prev = active ? active.previousElementSibling : items[items.length - 1];
+            if (active) active.classList.remove('hovered');
+            if (prev) { prev.classList.add('hovered'); prev.scrollIntoView({ block: 'nearest' }); }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (active) {
+                active.click();
+            } else {
+                doMapSearch();
+            }
+        } else if (e.key === 'Escape') {
+            if (box) box.style.display = 'none';
+        }
+    });
+});
+
+async function doMapSearch() {
+    const query = document.getElementById('addressInput').value.trim();
+    document.getElementById('mapSuggestions').style.display = 'none';
+    if (!query) return;
+    if (currentSuggestions.length) { selectSuggestion(0); return; }
+    try {
+        const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=1&lang=en`);
+        const data = await res.json();
+        const results = (data.features || []).map(photonToNominatim);
+        if (results.length) {
+            currentSuggestions = results;
+            selectSuggestion(0);
+        }
+    } catch(e) {}
+}
+
+// Close suggestions when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.map-search-wrap')) {
+        const box = document.getElementById('mapSuggestions');
+        if (box) box.style.display = 'none';
+    }
+});
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
