@@ -1002,11 +1002,6 @@
             .hero-buttons { flex-direction: column; align-items: center; }
             .btn-primary, .btn-secondary { width: 100%; max-width: 320px; justify-content: center; }
 
-            /* Partner section stats: 1 column on mobile */
-            .partner-stats-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-            }
-
             /* Results modal: 2-column grid so 3rd card is never cut off */
             .results-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
@@ -1014,11 +1009,6 @@
 
             /* Testimonials: single column on mobile */
             .testimonials-grid {
-                grid-template-columns: 1fr !important;
-            }
-
-            /* Partner section stats: stack to 1 column on very small screens */
-            #partner-stats {
                 grid-template-columns: 1fr !important;
             }
 
@@ -1720,22 +1710,8 @@
                 <li><span class="check">&#10003;</span> <span data-i18n="plan2_f6">Professional PDF report</span></li>
                 <li><span class="check">&#10003;</span> <span data-i18n="plan2_f7">Delivered within 24h of the flight</span></li>
             </ul>
-            <a href="for-installers.html" class="btn-primary" style="width:100%; justify-content:center; border-radius:14px;" data-i18n="plan2_cta">
+            <a href="#calculator" class="btn-primary" style="width:100%; justify-content:center; border-radius:14px;" data-i18n="plan2_cta">
                 Order Drone Roof Survey
-            </a>
-        </div>
-        <div class="pricing-card">
-            <div class="plan-name">For Solar Installers</div>
-            <div class="plan-price" style="font-size:22px;">Request a Demo</div>
-            <div class="plan-desc">Pre-screen roofs at scale before sending your team onsite. Pay-per-report, subscription and volume pricing available — let's find what fits your pipeline.</div>
-            <ul class="plan-features">
-                <li><span class="check">&#10003;</span> Bulk address screening</li>
-                <li><span class="check">&#10003;</span> Standardized preliminary reports</li>
-                <li><span class="check">&#10003;</span> Optional drone survey add-on</li>
-                <li><span class="check">&#10003;</span> Flexible pricing for your volume</li>
-            </ul>
-            <a href="for-installers.html" class="btn-secondary" style="width:100%; justify-content:center; border-radius:14px;">
-                Request an Installer Demo
             </a>
         </div>
     </div>
@@ -1782,13 +1758,13 @@
                     </div>
                     <div>
                         <div style="font-size:14px; font-weight:700; color:#1a1a1a; margin-bottom:4px;">Your report can't be gamed</div>
-                        <div style="font-size:13px; color:#6b7280; line-height:1.6;">We may earn a small flat referral fee if you choose an installer through Sunlytics. It never changes based on your roof, your system size, or your quote — so there's no incentive to inflate your numbers.</div>
+                        <div style="font-size:13px; color:#6b7280; line-height:1.6;">We don't earn anything based on your roof, your system size, or your quote — so there's no incentive to inflate your numbers.</div>
                     </div>
                 </div>
             </div>
             <div style="border-top:1px solid #efefef; padding-top:22px; text-align:center;">
                 <div style="font-size:18px; font-weight:800; color:#1a1a1a; margin-bottom:6px;">Your report. Your data. Your choice.</div>
-                <div style="font-size:13px; color:#6b7280; line-height:1.7; max-width:560px; margin:0 auto;">You own your report and your property data. We share it with an installer only if and when you give explicit consent, never automatically and never without asking.</div>
+                <div style="font-size:13px; color:#6b7280; line-height:1.7; max-width:560px; margin:0 auto;">You own your report and your property data. We never share it with any installer — you're free to bring it to whoever you choose.</div>
             </div>
         </div>
 
@@ -2301,39 +2277,6 @@ function toggleFaq(i) {
                     </button>
                 </div>
 
-                <!-- Installation Partner CTA -->
-                <div style="background:linear-gradient(135deg,#f0fff4,#e6f7ee); border-radius:20px; padding:24px; border:1px solid #a7f3c0; margin-bottom:16px;">
-                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                        <div style="width:40px; height:40px; background:linear-gradient(135deg,#22c55e,#16a34a); border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-                        </div>
-                        <div>
-                            <div data-i18n="partner_badge" style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#16a34a;">Certified Installation Partner</div>
-                            <div style="font-size:16px; font-weight:800; color:#1a1a1a;">AurinkoPro Suomi</div>
-                        </div>
-                        <div data-i18n="partner_quote_tag" style="margin-left:auto; background:#dcfce7; color:#16a34a; font-size:11px; font-weight:700; padding:4px 10px; border-radius:50px; text-align:center;">FREE QUOTE</div>
-                    </div>
-                    <p data-i18n="partner_desc" style="color:#374151; font-size:13px; line-height:1.6; margin-bottom:16px;">Our certified installation partner will visit your property, physically confirm your results, and provide a <strong>no-obligation installation quote</strong>. Completely free.</p>
-                    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-                        <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#374151;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span data-i18n="partner_f1">Licensed installer</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#374151;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span data-i18n="partner_f2">10-year warranty</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#374151;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span data-i18n="partner_f3">No obligation</span>
-                        </div>
-                    </div>
-                    <a href="contact.html" class="quote-btn" style="width:100%; box-sizing:border-box; font-size:15px; padding:16px 20px; background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 6px 20px rgba(34,197,94,0.35); justify-content:center; align-items:flex-start;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                        <span data-i18n="partner_cta_btn" style="text-align:center;">Get Free Installation Quote</span>
-                    </a>
-                </div>
-
                 <button onclick="closeModal()" data-i18n="modal_close_btn" style="width:100%; background:#f5f5f5; border:none; padding:14px; border-radius:50px; font-size:14px; font-weight:600; cursor:pointer; color:#666; font-family:inherit;">
                     Close and Analyze Another Address
                 </button>
@@ -2697,10 +2640,6 @@ function toggleFaq(i) {
         btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Confirm Order (€149)';
     }
 
-    function referToPartner() {
-        window.location.href = 'contact.html';
-    }
-
     // ── COOKIES ───────────────────────────────────────────────────
     function acceptCookies() {
         localStorage.setItem('cookieConsent', 'accepted');
@@ -2775,7 +2714,7 @@ function toggleFaq(i) {
             plan2_f5: "Human-reviewed analysis", plan2_f6: "Professional PDF report",
             plan2_f7: "Delivered within 24h of the flight",
             plan2_cta: "Order Drone Roof Survey",
-            // Partner
+            // Installer subscription plans
             subscribe_tag: "For Solar Installers",
             subscribe_title: "Screen every lead <span style=\"background:linear-gradient(135deg,#f7971e,#ff4e00); -webkit-background-clip:text; -webkit-text-fill-color:transparent;\">without limits.</span>",
             subscribe_subtitle: "Get unlimited satellite pre-screening and API access for your whole pipeline — one flat monthly rate, no per-lead fees.",
@@ -2810,11 +2749,6 @@ function toggleFaq(i) {
             drone_cta_title: "Want a Full Drone Roof Survey?",
             drone_cta_desc: "A certified drone pilot will collect high-resolution imagery and roof data, and we'll deliver a professional PDF report within 24 hours of the completed flight, for just <strong style=\"color:#c45000;\">\u20ac149</strong>",
             drone_cta_btn: "Order Drone Roof Survey (\u20ac149)",
-            partner_badge: "Certified Installation Partner",
-            partner_quote_tag: "FREE QUOTE",
-            partner_desc: "Our certified installation partner will visit your property, physically confirm your results, and provide a <strong>no-obligation installation quote</strong>. Completely free.",
-            partner_f1: "Licensed installer", partner_f2: "10-year warranty", partner_f3: "No obligation",
-            partner_cta_btn: "Get Free Installation Quote",
             modal_close_btn: "Close and Analyze Another Address",
         },
         fi: {
@@ -2858,7 +2792,7 @@ function toggleFaq(i) {
             plan2_f5: "Ihmisen tarkistama analyysi", plan2_f6: "Ammattimainen PDF-raportti",
             plan2_f7: "Toimitetaan 24 tunnin sisällä lennosta",
             plan2_cta: "Tilaa dronekartoitus",
-            // Partner
+            // Installer subscription plans
             subscribe_tag: "Aurinkoasentajille",
             subscribe_title: "Seulo jokainen liidi <span style=\"background:linear-gradient(135deg,#f7971e,#ff4e00); -webkit-background-clip:text; -webkit-text-fill-color:transparent;\">rajattomasti.</span>",
             subscribe_subtitle: "Saat rajattoman satelliittiesiseulonnan ja API-pääsyn koko putkellesi — yksi kiinteä kuukausihinta, ei liidikohtaisia maksuja.",
@@ -2893,11 +2827,6 @@ function toggleFaq(i) {
             drone_cta_title: "Haluatko täyden dronekartoituksen?",
             drone_cta_desc: "Sertifioitu dronepilotti kerää korkearesoluutioisen kuvan ja kattotiedot, ja toimitamme ammattimaisen PDF-raportin 24 tunnin sisällä lennon valmistumisesta, hintaan vain <strong style=\"color:#c45000;\">\u20ac149</strong>",
             drone_cta_btn: "Tilaa dronekartoitus (\u20ac149)",
-            partner_badge: "Sertifioitu asennuskumppani",
-            partner_quote_tag: "ILMAINEN TARJOUS",
-            partner_desc: "Sertifioitu asennuskumppanimme käy kiinteistössäsi, vahvistaa tuloksesi fyysisesti ja antaa <strong>tarjouksen ilman sitoumusta</strong>. Täysin ilmaiseksi.",
-            partner_f1: "Lisensoitu urakoitsija", partner_f2: "10 vuoden takuu", partner_f3: "Ei sitoumusta",
-            partner_cta_btn: "Hanki ilmainen asennustarjous",
             modal_close_btn: "Sulje ja analysoi toinen osoite",
         }
     };
