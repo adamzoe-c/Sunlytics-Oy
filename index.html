@@ -1353,6 +1353,14 @@
                 gap: 32px;
             }
 
+            .installers-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .installer-plans-grid {
+                grid-template-columns: 1fr !important;
+            }
+
             .hero-map-text {
                 padding-bottom: 0;
                 text-align: center;
@@ -1548,7 +1556,7 @@
 
 <!-- FOR SOLAR INSTALLERS -->
 <section id="installers" style="padding:70px 5%; background:#f9f9f9;">
-    <div style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:center;">
+    <div class="installers-grid" style="max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1.3fr 1fr; gap:48px; align-items:center;">
         <div>
             <div style="display:inline-flex; align-items:center; gap:8px; background:#fff8f0; border:1px solid #fde8c3; color:#c45000; font-size:13px; font-weight:700; padding:6px 14px; border-radius:100px; margin-bottom:18px;">
                 For Solar Installers
@@ -1576,6 +1584,53 @@
                 </div>
                 <div><strong style="display:block; margin-bottom:4px; color:#1a1a1a;">Optional drone add-on</strong><span style="color:#6b7280; font-size:14px;">Order a professional survey when a lead needs more precision.</span></div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- INSTALLER SUBSCRIPTION SECTION -->
+<section style="padding:90px 5%; background:#ffffff; text-align:center;">
+    <div style="display:inline-block; background:#fff8f0; color:#c45000; padding:5px 16px; border-radius:50px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px;" data-i18n="subscribe_tag">For Solar Installers</div>
+    <div style="font-size:clamp(28px,3.5vw,44px); font-weight:800; color:#1a1a1a; letter-spacing:-0.5px; margin-bottom:14px;" data-i18n="subscribe_title">Screen every lead <span style="background:linear-gradient(135deg,#f7971e,#ff4e00); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">without limits.</span></div>
+    <div style="font-size:16px; color:#6b7280; margin-bottom:56px; line-height:1.6; max-width:540px; margin-left:auto; margin-right:auto;" data-i18n="subscribe_subtitle">Get unlimited satellite pre-screening and API access for your whole pipeline — one flat monthly rate, no per-lead fees.</div>
+
+    <div class="installer-plans-grid" style="max-width:900px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
+        <div style="background:#f9f9f9; border:1px solid #e8e8e8; border-radius:24px; padding:40px 28px; text-align:left; display:flex; flex-direction:column;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#6b7280; margin-bottom:8px;" data-i18n="plan_starter_label">Starter</div>
+            <div style="font-size:36px; font-weight:800; color:#1a1a1a; margin-bottom:4px;">&#8364;99<span style="font-size:14px; font-weight:500; color:#6b7280;" data-i18n="per_month">/mo</span></div>
+            <div style="font-size:13px; color:#6b7280; margin-bottom:24px;" data-i18n="plan_starter_desc">For small teams getting started</div>
+            <ul style="list-style:none; padding:0; margin:0 0 28px 0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:#374151;">
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_starter_f1">Up to 50 pre-screens / month</span></li>
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_starter_f2">Standardized PDF reports</span></li>
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_starter_f3">Email support</span></li>
+            </ul>
+            <a href="for-installers.html" class="btn-primary" style="margin-top:auto; text-align:center; justify-content:center;" data-i18n="plan_cta">Get Started</a>
+        </div>
+
+        <div style="background:linear-gradient(135deg,#fff8f0,#ffe9d6); border:2px solid #f7971e; border-radius:24px; padding:40px 28px; text-align:left; display:flex; flex-direction:column; position:relative;">
+            <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#f7971e,#ff4e00); color:white; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:5px 16px; border-radius:50px; white-space:nowrap;" data-i18n="plan_popular">Most Popular</div>
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#c45000; margin-bottom:8px;" data-i18n="plan_pro_label">Pro</div>
+            <div style="font-size:36px; font-weight:800; color:#1a1a1a; margin-bottom:4px;">&#8364;299<span style="font-size:14px; font-weight:500; color:#6b7280;" data-i18n="per_month">/mo</span></div>
+            <div style="font-size:13px; color:#6b7280; margin-bottom:24px;" data-i18n="plan_pro_desc">For growing installer teams</div>
+            <ul style="list-style:none; padding:0; margin:0 0 28px 0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:#374151;">
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_pro_f1">Unlimited pre-screens</span></li>
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_pro_f2">API access for your CRM</span></li>
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_pro_f3">Discounted drone add-ons</span></li>
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_pro_f4">Priority support</span></li>
+            </ul>
+            <a href="for-installers.html" class="btn-primary" style="margin-top:auto; text-align:center; justify-content:center;" data-i18n="plan_cta">Get Started</a>
+        </div>
+
+        <div style="background:#f9f9f9; border:1px solid #e8e8e8; border-radius:24px; padding:40px 28px; text-align:left; display:flex; flex-direction:column;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#6b7280; margin-bottom:8px;" data-i18n="plan_enterprise_label">Enterprise</div>
+            <div style="font-size:36px; font-weight:800; color:#1a1a1a; margin-bottom:4px;" data-i18n="plan_enterprise_price">Custom</div>
+            <div style="font-size:13px; color:#6b7280; margin-bottom:24px;" data-i18n="plan_enterprise_desc">For multi-region installer networks</div>
+            <ul style="list-style:none; padding:0; margin:0 0 28px 0; display:flex; flex-direction:column; gap:12px; font-size:14px; color:#374151;">
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_ent_f1">White-label reports</span></li>
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_ent_f2">Dedicated account manager</span></li>
+                <li style="display:flex; gap:8px;"><span class="check">&#10003;</span> <span data-i18n="plan_ent_f3">Custom SLAs & volume pricing</span></li>
+            </ul>
+            <a href="contact.html" class="btn-primary" style="margin-top:auto; text-align:center; justify-content:center; background:#1a1a1a;" data-i18n="plan_contact_cta">Contact Sales</a>
         </div>
     </div>
 </section>
@@ -2057,72 +2112,6 @@ function toggleFaq(i) {
         </div>
     </div>
 </div>
-
-<!-- PARTNER SECTION -->
-<section style="padding:90px 5%; background:#ffffff; text-align:center;">
-    <div style="display:inline-block; background:#f0fff4; color:#16a34a; padding:5px 16px; border-radius:50px; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px;" data-i18n="partner_tag">Certified Partner</div>
-    <div style="font-size:clamp(28px,3.5vw,44px); font-weight:800; color:#1a1a1a; letter-spacing:-0.5px; margin-bottom:14px;" data-i18n="partner_title">Ready to <span style="background:linear-gradient(135deg,#22c55e,#16a34a); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Install?</span></div>
-    <div style="font-size:16px; color:#6b7280; margin-bottom:56px; line-height:1.6; max-width:540px; margin-left:auto; margin-right:auto;" data-i18n="partner_subtitle">Your solar report is just the first step. Our certified installation partner will turn your analysis into reality.</div>
-
-    <div style="max-width:760px; margin:0 auto; background:linear-gradient(135deg,#f0fff4,#e6f7ee); border-radius:28px; padding:48px 40px; border:1px solid #a7f3c0; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:-40px; right:-40px; width:180px; height:180px; background:rgba(34,197,94,0.08); border-radius:50%;"></div>
-        <div style="position:absolute; bottom:-60px; left:-30px; width:220px; height:220px; background:rgba(34,197,94,0.05); border-radius:50%;"></div>
-
-        <!-- Partner header -->
-        <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:28px; flex-wrap:wrap;">
-            <div style="width:64px; height:64px; background:linear-gradient(135deg,#22c55e,#16a34a); border-radius:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(34,197,94,0.35); flex-shrink:0;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-            </div>
-            <div style="text-align:left;">
-                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:#16a34a; margin-bottom:4px;" data-i18n="partner_label">Official Sunlytics Partner</div>
-                <div style="font-size:28px; font-weight:800; color:#1a1a1a;">AurinkoPro Suomi</div>
-            </div>
-        </div>
-
-        <!-- Stats grid -->
-        <div class="partner-stats-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;">
-            <div style="background:white; border-radius:16px; padding:20px 14px; text-align:center; border:1px solid #d1fae5;">
-                <div style="font-size:28px; font-weight:800; color:#16a34a;">500+</div>
-                <div style="font-size:12px; color:#6b7280; margin-top:4px; font-weight:500;" data-i18n="stat_installations">Installations Done</div>
-            </div>
-            <div style="background:white; border-radius:16px; padding:20px 14px; text-align:center; border:1px solid #d1fae5;">
-                <div style="font-size:28px; font-weight:800; color:#16a34a;">10yr</div>
-                <div style="font-size:12px; color:#6b7280; margin-top:4px; font-weight:500;" data-i18n="stat_warranty">Workmanship Warranty</div>
-            </div>
-            <div style="background:white; border-radius:16px; padding:20px 14px; text-align:center; border:1px solid #d1fae5;">
-                <div style="font-size:28px; font-weight:800; color:#16a34a;">4.9</div>
-                <div style="font-size:12px; color:#6b7280; margin-top:4px; font-weight:500;" data-i18n="stat_rating">Customer Rating</div>
-            </div>
-        </div>
-
-        <!-- Trust pills -->
-        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:32px; text-align:left;">
-            <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#374151;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                <span data-i18n="trust_certified">Licensed &amp; certified in Finland</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#374151;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                <span data-i18n="trust_visit">Free on-site visit</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#374151;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                <span data-i18n="trust_quote">No-obligation quote</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#374151;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                <span data-i18n="trust_financing">Financing available</span>
-            </div>
-        </div>
-
-        <a href="contact.html" class="quote-btn" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span data-i18n="quote_btn">Get Your Free Installation Quote</span>
-        </a>
-        <div style="font-size:12px; color:#6b7280; margin-top:14px;" data-i18n="quote_note">No payment required. An installation partner advisor will contact you within 24 hours.</div>
-        <div style="font-size:11px; color:#9ca3af; margin-top:8px; max-width:480px; margin-left:auto; margin-right:auto;" data-i18n="partner_disclosure">Sunlytics may earn a flat referral fee if you choose an installer through this page. It's disclosed here, and it never changes based on your roof, system size, or quote — so it never influences your report.</div>
-    </div>
-</section>
 
 <!-- FOOTER -->
 <!-- DISCLAIMER -->
@@ -2787,18 +2776,16 @@ function toggleFaq(i) {
             plan2_f7: "Delivered within 24h of the flight",
             plan2_cta: "Order Drone Roof Survey",
             // Partner
-            partner_tag: "Certified Partner",
-            partner_title: "Ready to <span style=\"background:linear-gradient(135deg,#22c55e,#16a34a); -webkit-background-clip:text; -webkit-text-fill-color:transparent;\">Install?</span>",
-            partner_subtitle: "Your solar report is just the first step. Our certified installation partner will turn your analysis into reality.",
-            partner_label: "Official Sunlytics Partner",
-            stat_installations: "Installations Done", stat_warranty: "Workmanship Warranty", stat_rating: "Customer Rating",
-            trust_certified: "Licensed & certified in Finland",
-            trust_visit: "Free on-site visit",
-            trust_quote: "No-obligation quote",
-            trust_financing: "Financing available",
-            quote_btn: "Get Your Free Installation Quote",
-            quote_note: "No payment required. An installation partner advisor will contact you within 24 hours.",
-            partner_disclosure: "Sunlytics may earn a flat referral fee if you choose an installer through this page. It's disclosed here, and it never changes based on your roof, system size, or quote — so it never influences your report.",
+            subscribe_tag: "For Solar Installers",
+            subscribe_title: "Screen every lead <span style=\"background:linear-gradient(135deg,#f7971e,#ff4e00); -webkit-background-clip:text; -webkit-text-fill-color:transparent;\">without limits.</span>",
+            subscribe_subtitle: "Get unlimited satellite pre-screening and API access for your whole pipeline — one flat monthly rate, no per-lead fees.",
+            plan_starter_label: "Starter", plan_starter_desc: "For small teams getting started",
+            plan_starter_f1: "Up to 50 pre-screens / month", plan_starter_f2: "Standardized PDF reports", plan_starter_f3: "Email support",
+            plan_pro_label: "Pro", plan_pro_desc: "For growing installer teams", plan_popular: "Most Popular",
+            plan_pro_f1: "Unlimited pre-screens", plan_pro_f2: "API access for your CRM", plan_pro_f3: "Discounted drone add-ons", plan_pro_f4: "Priority support",
+            plan_enterprise_label: "Enterprise", plan_enterprise_price: "Custom", plan_enterprise_desc: "For multi-region installer networks",
+            plan_ent_f1: "White-label reports", plan_ent_f2: "Dedicated account manager", plan_ent_f3: "Custom SLAs & volume pricing",
+            per_month: "/mo", plan_cta: "Get Started", plan_contact_cta: "Contact Sales",
             cookie_text: 'We use cookies to improve your experience and analyze site traffic. By continuing, you agree to our <a href="privacy.html" style="color:#f7971e;text-decoration:underline;">Privacy Policy</a>.',
             cookie_decline: "Decline",
             cookie_accept: "Accept",
@@ -2872,18 +2859,16 @@ function toggleFaq(i) {
             plan2_f7: "Toimitetaan 24 tunnin sisällä lennosta",
             plan2_cta: "Tilaa dronekartoitus",
             // Partner
-            partner_tag: "Sertifioitu kumppani",
-            partner_title: "Valmis <span style=\"background:linear-gradient(135deg,#22c55e,#16a34a); -webkit-background-clip:text; -webkit-text-fill-color:transparent;\">asennukseen?</span>",
-            partner_subtitle: "Aurinkoraporttisi on vasta ensimmäinen askel. Sertifioitu asennuskumppanimme muuttaa analyysisi todeksi.",
-            partner_label: "Sunlyticsin virallinen kumppani",
-            stat_installations: "Tehtyjä asennuksia", stat_warranty: "Työn takuu", stat_rating: "Asiakasarvio",
-            trust_certified: "Lisensoitu ja sertifioitu Suomessa",
-            trust_visit: "Ilmainen käynti paikan päällä",
-            trust_quote: "Tarjous ilman sitoumusta",
-            trust_financing: "Rahoitusvaihtoehtoja saatavilla",
-            quote_btn: "Hanki ilmainen asennustarjous",
-            quote_note: "Ei vaadi maksua. Asennuskumppanin edustaja ottaa sinuun yhteyttä 24 tunnin sisällä.",
-            partner_disclosure: "Sunlytics voi saada kiinteän välityspalkkion, jos valitset urakoitsijan tämän sivun kautta. Tämä kerrotaan tässä avoimesti, eikä se koskaan muutu kattosi, järjestelmän koon tai tarjouksen mukaan — joten se ei koskaan vaikuta raporttiisi.",
+            subscribe_tag: "Aurinkoasentajille",
+            subscribe_title: "Seulo jokainen liidi <span style=\"background:linear-gradient(135deg,#f7971e,#ff4e00); -webkit-background-clip:text; -webkit-text-fill-color:transparent;\">rajattomasti.</span>",
+            subscribe_subtitle: "Saat rajattoman satelliittiesiseulonnan ja API-pääsyn koko putkellesi — yksi kiinteä kuukausihinta, ei liidikohtaisia maksuja.",
+            plan_starter_label: "Starter", plan_starter_desc: "Pienille tiimeille alkuun pääsemiseksi",
+            plan_starter_f1: "Jopa 50 esiseulontaa / kk", plan_starter_f2: "Vakioidut PDF-raportit", plan_starter_f3: "Sähköpostituki",
+            plan_pro_label: "Pro", plan_pro_desc: "Kasvaville asennustiimeille", plan_popular: "Suosituin",
+            plan_pro_f1: "Rajattomat esiseulonnat", plan_pro_f2: "API-pääsy CRM:ääsi", plan_pro_f3: "Alennetut drone-lisäpalvelut", plan_pro_f4: "Ensisijainen tuki",
+            plan_enterprise_label: "Enterprise", plan_enterprise_price: "Räätälöity", plan_enterprise_desc: "Monialueellisille asennusverkostoille",
+            plan_ent_f1: "White-label-raportit", plan_ent_f2: "Oma asiakasvastaava", plan_ent_f3: "Räätälöidyt SLA:t ja volyymihinnoittelu",
+            per_month: "/kk", plan_cta: "Aloita", plan_contact_cta: "Ota yhteyttä myyntiin",
             cookie_text: 'Käytämme evästeitä parantaaksemme kokemustasi ja analysoidaksemme sivuston liikennettä. Jatkamalla hyväksyt <a href="privacy.html" style="color:#f7971e;text-decoration:underline;">tietosuojakäytäntömme</a>.',
             cookie_decline: "Hylkää",
             cookie_accept: "Hyväksy",
